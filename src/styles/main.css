@@ -1599,14 +1599,38 @@ textarea:focus {
   }
 }
 
-/* ---------- Startsidans foto (diskret band under hero) ---------- */
+/* ---------- Startsidans foto (hela bilden, mörkare, med namnet ovanpå) ---------- */
 
 .home-photo {
+  position: relative;
+  margin: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.home-photo img {
   display: block;
   width: 100%;
-  height: clamp(160px, 28vw, 300px);
-  object-fit: cover;
-  object-position: center 30%;
-  border-radius: var(--radius);
-  opacity: 0.92;
+  height: auto;
+}
+
+.home-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 0.35);
+}
+
+.home-photo figcaption {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: 900;
+  font-size: clamp(2rem, 9vw, 6rem);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgb(0 0 0 / 0.3);
 }
