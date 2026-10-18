@@ -1598,3 +1598,15 @@ textarea:focus {
     grid-column: 1 / -1;
   }
 }
+
+/* ---------- Startsidans foto (diskret band under hero) ---------- */
+
+.home-photo {
+  display: block;
+  width: 100%;
+  height: clamp(160px, 28vw, 300px);
+  object-fit: cover;
+  object-position: center 30%;
+  border-radius: var(--radius);
+  opacity: 0.92;
+}
