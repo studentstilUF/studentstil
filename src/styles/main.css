@@ -1731,3 +1731,27 @@ textarea:focus {
 .variant-option .swatch {
   margin-right: 0;
 }
+
+/* Tidslinje: en tunn linje mellan prickarna, svart fram till aktuellt steg. */
+.order-track {
+  gap: 0;
+}
+
+.order-track li {
+  position: relative;
+  padding: 8px 0;
+}
+
+.order-track li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: calc(50% + 9px);
+  height: calc(100% - 18px);
+  width: 2px;
+  background: var(--line);
+}
+
+.order-track li[data-state='done']:not(:last-child)::after {
+  background: var(--text);
+}

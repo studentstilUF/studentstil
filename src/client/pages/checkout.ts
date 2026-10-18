@@ -4,6 +4,7 @@ import { formatSek } from '../../shared/format.ts';
 import { type CartLine, MAX_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
 import { ApiError, apiPost } from '../api.ts';
 import { clearCart, getCart, onCartChange, removeFromCart, setQuantity } from '../cart.ts';
+import { colorSwatch } from '../colorSwatch.ts';
 import { byId, h } from '../dom.ts';
 import { fetchProducts, hasVariantChoice } from '../products.ts';
 import { currentSource } from '../source.ts';
@@ -112,6 +113,7 @@ function cartLine(line: CartLine): HTMLLIElement {
             h(
               'span',
               { class: 'muted small' },
+              colorSwatch(line.size),
               `${product?.variantLabel ?? 'Variant'}: ${line.size}`,
             ),
             h('br'),
