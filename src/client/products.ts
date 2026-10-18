@@ -109,8 +109,8 @@ export function productCard(product: Product): HTMLElement {
     h(
       'div',
       { class: 'product-card-body' },
+      // Beskrivningen visas bara på produktens egen sida.
       h('h3', {}, h('a', { href: productUrl(product), class: 'product-link' }, product.name)),
-      h('p', {}, product.description),
       h(
         'div',
         { class: 'product-meta' },
