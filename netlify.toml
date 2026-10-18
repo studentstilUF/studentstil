@@ -1,0 +1,50 @@
+# Netlify-inställningar. Läses automatiskt vid varje publicering.
+
+[build]
+# Typkontroll, lint och tester körs före bygget. Om något fallerar publiceras
+# INTE den nya versionen – den gamla ligger kvar. Så kan en bugg inte nå kunderna.
+command = "pnpm run check && pnpm test && pnpm run build"
+publish = "dist"
+
+[build.environment]
+NODE_VERSION = "24"
+
+[functions]
+node_bundler = "esbuild"
+
+# Lokal utveckling: `pnpm dev` startar Vite + funktionerna på http://localhost:8888
+[dev]
+framework = "#custom"
+command = "pnpm exec vite"
+targetPort = 5173
+port = 8888
+
+# Säkerhetsrubriker för hela sajten
+[[headers]]
+for = "/*"
+[headers.values]
+Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+X-Content-Type-Options = "nosniff"
+X-Frame-Options = "DENY"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+
+# Adminpanel, kassa och orderbekräftelse ska inte indexeras eller cachas
+[[headers]]
+for = "/admin/*"
+[headers.values]
+X-Robots-Tag = "noindex, nofollow"
+Cache-Control = "no-store"
+
+[[headers]]
+for = "/order/*"
+[headers.values]
+X-Robots-Tag = "noindex, nofollow"
+Cache-Control = "no-store"
+
+# Byggda filer har unika namn och kan cachas länge
+[[headers]]
+for = "/assets/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"

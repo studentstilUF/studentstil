@@ -1,0 +1,21 @@
+# Inställningar för pnpm (pakethanteraren). Se SI:s riktlinjer: knowledgebase/security.md.
+# Detta skyddar mot att skadliga paketversioner installeras ("supply chain"-attacker).
+
+# Installera bara versioner som funnits i minst 7 dagar (värdet är i MINUTER).
+minimumReleaseAge: 10080
+minimumReleaseAgeStrict: true
+
+# Indirekta beroenden måste komma från npm-registret, inte från git-länkar eller lösa filer.
+blockExoticSubdeps: true
+# Vägra paket vars "trust level" har sänkts (typiskt tecken på stulna publiceringsnycklar).
+trustPolicy: no-downgrade
+trustPolicyExclude: []
+strictDepBuilds: true
+
+# Spara exakta versioner i package.json (ingen ^ som låter versioner glida).
+savePrefix: ''
+
+# Installationsskript från beroenden körs inte, om de inte uttryckligen tillåts här.
+allowBuilds:
+  # esbuild (via vite) har färdiga binärer i optionalDependencies, så skriptet behövs inte.
+  esbuild: false

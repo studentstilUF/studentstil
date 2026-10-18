@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kassa – Studentstil</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/logo/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main">
+      <div class="container narrow">
+        <header class="page-header">
+          <h1>Kassa</h1>
+          <p class="muted">Fält markerade med <span class="optional">(valfritt)</span> behöver du inte fylla i. Allt annat är obligatoriskt.</p>
+        </header>
+
+        <p id="checkout-loading" class="muted" aria-live="polite">Hämtar varukorgen …</p>
+        <noscript><p class="notice">Slå på JavaScript för att kunna beställa.</p></noscript>
+
+        <div id="cart-empty" hidden>
+          <p class="notice">Varukorgen är tom.</p>
+          <p><a class="button" href="/bestall/">Till produkterna</a></p>
+        </div>
+
+        <form id="order-form" class="form" novalidate hidden>
+          <div id="form-errors" class="notice notice-error" role="alert" tabindex="-1" hidden></div>
+
+          <fieldset>
+            <legend id="items">1. Din varukorg</legend>
+            <ul id="cart-lines" class="cart-lines" aria-live="polite"></ul>
+            <p id="items-error" class="field-error" hidden></p>
+            <p class="small"><a href="/bestall/">+ Lägg till fler produkter</a></p>
+            <div id="summary" aria-live="polite"></div>
+          </fieldset>
+
+          <fieldset>
+            <legend>2. Dina uppgifter</legend>
+            <div class="field">
+              <label for="name">Fullständigt namn</label>
+              <input id="name" name="name" type="text" autocomplete="name" maxlength="100" aria-describedby="name-error" required />
+              <p id="name-error" class="field-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="email">E-postadress</label>
+              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" aria-describedby="email-hint email-error" required />
+              <p id="email-hint" class="hint">Hit skickar vi orderbekräftelsen.</p>
+              <p id="email-error" class="field-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="schoolClass">Klass</label>
+              <input id="schoolClass" name="schoolClass" type="text" autocomplete="off" autocapitalize="characters" maxlength="20" placeholder="t.ex. TE3A" aria-describedby="schoolClass-hint schoolClass-error" required />
+              <p id="schoolClass-hint" class="hint">Köper du åt någon annan? Skriv studentens klass.</p>
+              <p id="schoolClass-error" class="field-error" hidden></p>
+            </div>
+            <div class="field">
+              <label for="phone">Mobilnummer för Swish <span class="optional">(valfritt)</span></label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="070-123 45 67" aria-describedby="phone-hint phone-error" />
+              <p id="phone-hint" class="hint">Hjälper oss att hitta din betalning om något strular.</p>
+              <p id="phone-error" class="field-error" hidden></p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>3. Adress och leverans</legend>
+            <div class="field">
+              <label for="street">Gatuadress</label>
+              <input id="street" name="street" type="text" autocomplete="street-address" maxlength="120" aria-describedby="street-error" required />
+              <p id="street-error" class="field-error" hidden></p>
+            </div>
+            <div class="field-row postal">
+              <div class="field">
+                <label for="postalCode">Postnummer</label>
+                <input id="postalCode" name="postalCode" type="text" autocomplete="postal-code" inputmode="numeric" maxlength="6" placeholder="123 45" aria-describedby="postalCode-error" required />
+                <p id="postalCode-error" class="field-error" hidden></p>
+              </div>
+              <div class="field">
+                <label for="city">Ort</label>
+                <input id="city" name="city" type="text" autocomplete="address-level2" maxlength="60" aria-describedby="city-error" required />
+                <p id="city-error" class="field-error" hidden></p>
+              </div>
+            </div>
+            <p class="hint">Paketet skickas direkt från vår leverantör till din adress. Du får ett meddelande från fraktbolaget om var och när du hämtar det.</p>
+            <div class="field">
+              <label for="comment">Övrig kommentar <span class="optional">(valfritt)</span></label>
+              <textarea id="comment" name="comment" maxlength="500" aria-describedby="comment-error"></textarea>
+              <p id="comment-error" class="field-error" hidden></p>
+            </div>
+          </fieldset>
+
+          <!-- Honeypot mot spam: lämna tomt. Dolt för människor. -->
+          <div class="hp-field" aria-hidden="true">
+            <label for="website">Webbplats</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="field">
+            <label class="checkbox">
+              <input id="acceptTerms" name="acceptTerms" type="checkbox" aria-describedby="acceptTerms-error" required />
+              <span>Jag godkänner <a href="/kopvillkor/" target="_blank" rel="noopener">köpvillkoren</a> och att mina uppgifter behandlas enligt <a href="/integritetspolicy/" target="_blank" rel="noopener">integritetspolicyn</a>.</span>
+            </label>
+            <p id="acceptTerms-error" class="field-error" hidden></p>
+          </div>
+
+          <div>
+            <button id="submit" class="button button-large" type="submit">Skicka beställning</button>
+            <p class="hint">Efter att du skickat beställningen betalar du med Swish på nästa sida.</p>
+          </div>
+        </form>
+      </div>
+    </main>
+    <!-- @footer -->
+    <script type="module" src="/src/client/pages/checkout.ts"></script>
+  </body>
+</html>

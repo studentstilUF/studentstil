@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Produkt – Studentstil</title>
+    <meta name="description" content="Studentoverall, sprayfärg och spritpennor från Studentstil. Betala med Swish." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/logo/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
+    <link rel="preload" href="/api/products" as="fetch" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Brödsmulor">
+          <a href="/bestall/">Produkter</a>
+          <span aria-hidden="true">/</span>
+          <span id="breadcrumb-current" aria-current="page">Produkt</span>
+        </nav>
+        <div id="product" aria-live="polite">
+          <div class="product-page">
+            <div class="skeleton product-page-skeleton" aria-hidden="true"></div>
+            <p class="muted">Hämtar produkten …</p>
+          </div>
+        </div>
+        <noscript><p class="notice">Slå på JavaScript för att se produkten och beställa.</p></noscript>
+
+        <section id="related" class="section related" aria-labelledby="related-heading" hidden>
+          <h2 id="related-heading">Passar bra ihop med</h2>
+          <div id="related-grid" class="product-grid"></div>
+        </section>
+      </div>
+    </main>
+    <!-- @footer -->
+    <script type="module" src="/src/client/pages/product.ts"></script>
+  </body>
+</html>

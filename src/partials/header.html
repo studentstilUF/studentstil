@@ -1,0 +1,24 @@
+<a class="skip-link" href="#main">Hoppa till innehållet</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/" data-scroll-top aria-label="Studentstil">
+      <img class="logo-crown" src="/logo/krona.png" alt="" width="52" height="32" />
+      <span>Studentstil</span>
+    </a>
+    <nav class="site-nav" aria-label="Huvudmeny">
+      <a href="/bestall/">Produkter</a>
+      <a href="/klassbestallning/">Klassbeställning</a>
+      <a href="/om-oss/">Om oss</a>
+      <a href="/vanliga-fragor/">Frågor &amp; svar</a>
+    </nav>
+    <a id="cart-link" class="button button-small header-cta" href="/kassa/" aria-label="Varukorg">
+      <span>Varukorg</span>
+      <span id="cart-count" class="cart-count" hidden>0</span>
+    </a>
+  </div>
+</header>
+<div id="cart-bar" class="cart-bar" hidden>
+  <span id="cart-bar-text"></span>
+  <a class="button button-small" href="/kassa/">Till kassan</a>
+</div>
+<script type="module" src="/src/client/siteHeader.ts"></script>

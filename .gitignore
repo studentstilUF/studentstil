@@ -1,0 +1,14 @@
+node_modules/
+dist/
+coverage/
+.netlify/
+.vitest/
+.claude/launch.json
+.demo-qr.svg
+# Lokala hemligheter – får ALDRIG läggas på GitHub
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key

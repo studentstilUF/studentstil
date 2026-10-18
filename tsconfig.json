@@ -1,0 +1,40 @@
+{
+  // Strikt TypeScript 7-konfiguration enligt SI:s riktlinjer (knowledgebase/frontend.md).
+  // Alla regler anges uttryckligen, även de som redan är standard.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+
+    // Strikta kontroller
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+
+    // Modulhygien
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "erasableSyntaxOnly": true,
+    "noUncheckedSideEffectImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    // Vi skriver ".ts" i importer så att samma filer kan köras direkt av Node (scripts/).
+    "allowImportingTsExtensions": true,
+
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    // Projektets form
+    "types": ["node", "vite/client"]
+  },
+  "include": ["src", "netlify", "scripts", "vite.config.ts", "vitest.config.ts"]
+}

@@ -1,0 +1,1600 @@
+/* =====================================================================
+   Studentstil – vit och minimalistisk design, mobil först.
+   Färger och mått ändras här i :root.
+   ===================================================================== */
+
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #111111;
+  --muted: #6b6b6b;
+  --line: #e7e7e7;
+  --soft: #f5f5f4;
+  --error: #b42318;
+  --error-bg: #fef3f2;
+  --ok: #067647;
+  --ok-bg: #ecfdf3;
+  --warn: #93370d;
+  --warn-bg: #fffaeb;
+  --radius: 14px;
+  --radius-small: 10px;
+  --container: 1080px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.5em;
+  font-weight: 650;
+}
+
+h1 {
+  font-size: clamp(2rem, 7vw, 3.5rem);
+}
+
+h2 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+}
+
+h3 {
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.narrow {
+  max-width: 680px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  background: var(--text);
+  color: var(--bg);
+  padding: 8px 14px;
+  border-radius: var(--radius-small);
+  z-index: 10;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* ---------- Sidhuvud ---------- */
+
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.header-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'logo cta'
+    'nav nav';
+  align-items: center;
+  gap: 4px 16px;
+  padding-top: 12px;
+  padding-bottom: 4px;
+}
+
+.logo {
+  grid-area: logo;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+  margin: 0;
+}
+
+/* Logotypen är bara kronan. Namnet bredvid är vanlig text. */
+.logo-crown {
+  width: auto;
+  height: 28px;
+}
+
+.hero-crown {
+  width: auto;
+  height: 120px;
+  margin-bottom: 28px;
+}
+
+@media (min-width: 760px) {
+  .hero-crown {
+    height: 160px;
+  }
+}
+
+.header-cta {
+  grid-area: cta;
+}
+
+.site-nav {
+  grid-area: nav;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: var(--muted);
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current='page'] {
+  color: var(--text);
+  border-bottom-color: var(--text);
+}
+
+@media (min-width: 760px) {
+  .header-inner {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'logo nav cta';
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .site-nav {
+    justify-content: center;
+    gap: 32px;
+  }
+}
+
+/* ---------- Knappar ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid var(--text);
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.button:hover {
+  opacity: 0.85;
+}
+
+.button:disabled,
+.button[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.button-small {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 0.9rem;
+}
+
+.button-large {
+  min-height: 58px;
+  padding: 0 32px;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+@media (min-width: 560px) {
+  .button-large {
+    width: auto;
+  }
+}
+
+/* "Betala med Swish": vit knapp så att Swish logotyp ligger mot vitt, som Swish riktlinjer kräver */
+.button-swish {
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--text);
+  gap: 12px;
+  min-height: 64px;
+}
+
+.button-swish:hover {
+  opacity: 1;
+  background: var(--soft);
+}
+
+.button-swish .swish-logo {
+  height: 30px;
+  width: auto;
+}
+
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* ---------- Sektioner ---------- */
+
+main {
+  min-height: 60vh;
+}
+
+/* Fokus flyttas hit när man klickar på loggan – ingen ram behövs runt hela sidan. */
+main:focus {
+  outline: none;
+}
+
+.section {
+  padding: 48px 0;
+}
+
+.section + .section {
+  border-top: 1px solid var(--line);
+}
+
+.page-header {
+  padding: 40px 0 8px;
+}
+
+.hero {
+  padding: 56px 0 48px;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--muted);
+  max-width: 34em;
+}
+
+.hero .button {
+  margin-top: 12px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.steps {
+  display: grid;
+  gap: 24px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  counter-increment: step;
+  border-top: 1px solid var(--text);
+  padding-top: 16px;
+}
+
+.steps li::before {
+  content: counter(step, decimal-leading-zero);
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+@media (min-width: 760px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.prose {
+  max-width: 680px;
+}
+
+.prose h2 {
+  font-size: 1.35rem;
+  margin-top: 2em;
+}
+
+.prose h3 {
+  margin-top: 1.5em;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.2em;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.placeholder {
+  background: var(--warn-bg);
+  color: var(--warn);
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+/* ---------- Produkter ---------- */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (min-width: 760px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Vit bakgrund bakom alla produktbilder. Miniatyrerna får en tunn kant så att de syns. */
+.gallery {
+  background: var(--bg);
+}
+
+.gallery .gallery-thumb {
+  border-color: var(--line);
+}
+
+.gallery .gallery-thumb[aria-pressed='true'] {
+  border-color: var(--text);
+}
+
+.gallery-large {
+  border: 1px solid var(--line);
+}
+
+.gallery-main {
+  aspect-ratio: 1;
+  object-fit: contain;
+  width: 100%;
+  padding: 6%;
+}
+
+/* Karusell: bilderna ligger på rad och spåret glider i sidled. */
+.gallery-viewport {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y; /* vertikal scroll fungerar, sidledes svep hanteras av koden */
+}
+
+.gallery-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+.gallery-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  padding: 6%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  margin-top: -18px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.92);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.gallery-arrow:hover {
+  transform: scale(1.08);
+}
+
+.gallery-arrow:active {
+  transform: scale(0.94);
+}
+
+/* Pilspetsen ritas med två kanter på en roterad ruta */
+.gallery-arrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--text);
+  border-right: 2px solid var(--text);
+}
+
+.gallery-prev {
+  left: 8px;
+}
+
+.gallery-prev::before {
+  transform: translateX(2px) rotate(-135deg);
+}
+
+.gallery-next {
+  right: 8px;
+}
+
+.gallery-next::before {
+  transform: translateX(-2px) rotate(45deg);
+}
+
+/* På dator tonas pilarna in när muspekaren är över bilden. På mobil syns de alltid. */
+@media (hover: hover) and (pointer: fine) {
+  .gallery-arrow {
+    opacity: 0;
+  }
+
+  .gallery-viewport:hover .gallery-arrow,
+  .gallery-arrow:focus-visible {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-track,
+  .gallery-arrow {
+    transition: none;
+  }
+}
+
+.gallery-thumbs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px 10px;
+}
+
+.gallery-thumb {
+  width: 44px;
+  height: 44px;
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.gallery-thumb[aria-pressed='true'] {
+  border-color: var(--text);
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.product-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  flex: 1;
+}
+
+@media (min-width: 760px) {
+  .product-card-body {
+    padding: 16px;
+  }
+}
+
+.product-meta .muted {
+  text-align: right;
+}
+
+.product-card h3 {
+  margin: 0;
+}
+
+.product-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.price {
+  font-weight: 650;
+  font-size: 1.05rem;
+}
+
+.product-card .button {
+  margin-top: 10px;
+}
+
+.add-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.add-form select {
+  min-height: 44px;
+  padding: 8px 10px;
+}
+
+.add-form .button {
+  margin-top: 0;
+  min-height: 44px;
+  padding: 0 12px;
+}
+
+.add-status:empty {
+  display: none;
+}
+
+.add-status {
+  margin: 0;
+  color: var(--ok);
+}
+
+/* Varukorgen i sidhuvudet */
+
+.cart-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.78rem;
+}
+
+.cart-count[hidden] {
+  display: none;
+}
+
+/* Fast rad längst ner på mobilen när varukorgen har varor */
+
+.cart-bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 10px 10px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.12);
+  font-weight: 600;
+}
+
+.cart-bar[hidden] {
+  display: none;
+}
+
+@media (min-width: 760px) {
+  .cart-bar {
+    display: none !important;
+  }
+}
+
+/* Plats för den fasta raden så att den inte döljer sidfoten på mobilen */
+@media (max-width: 759px) {
+  body:has(.cart-bar:not([hidden])) {
+    padding-bottom: 80px;
+  }
+}
+
+/* Varukorgen i kassan */
+
+.cart-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.cart-line {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.cart-line img {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 6px;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.cart-line[data-unavailable='true'] {
+  border-color: var(--error);
+}
+
+.cart-line-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #cfcfcf;
+  border-radius: 999px;
+}
+
+.stepper button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.stepper button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.stepper output {
+  min-width: 24px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.skeleton {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(90deg, var(--soft), #fafafa, var(--soft));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+/* Länkar på produktkorten */
+
+.product-link {
+  text-decoration: none;
+}
+
+.product-link:hover {
+  text-decoration: underline;
+}
+
+.gallery-link {
+  display: block;
+  color: inherit;
+}
+
+/* ---------- Produktsida ---------- */
+
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  padding: 20px 0 16px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.breadcrumb a {
+  color: var(--muted);
+}
+
+.breadcrumb [aria-current] {
+  color: var(--text);
+}
+
+.product-page {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 860px) {
+  .product-page {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 48px;
+  }
+
+  /* Texten och köpknappen följer med när man scrollar förbi bilderna */
+  .product-summary {
+    position: sticky;
+    top: 96px;
+  }
+}
+
+.product-page-skeleton {
+  aspect-ratio: 1;
+}
+
+.gallery-large {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.gallery-large .gallery-thumbs {
+  gap: 8px;
+  padding: 4px 12px 14px;
+}
+
+.gallery-large .gallery-thumb {
+  width: 60px;
+  height: 60px;
+}
+
+.gallery-large .gallery-arrow {
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+}
+
+.product-summary h1 {
+  font-size: clamp(1.9rem, 5vw, 2.6rem);
+  margin-bottom: 8px;
+}
+
+.product-price {
+  font-size: 1.35rem;
+  font-weight: 650;
+  margin-bottom: 16px;
+}
+
+.product-description {
+  color: #3a3a3a;
+  margin-bottom: 24px;
+}
+
+.product-buy {
+  display: grid;
+  gap: 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.product-buy .button-large {
+  width: 100%;
+}
+
+.variant-picker {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.variant-picker legend {
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Varje storlek/färg är en radioknapp som ser ut som en knapp */
+.variant-option {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  min-height: 48px;
+  padding: 6px 14px;
+  border: 1px solid #cfcfcf;
+  border-radius: var(--radius-small);
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.variant-option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.variant-option small {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--warn);
+}
+
+.variant-option:hover {
+  border-color: var(--text);
+}
+
+.variant-option:has(input:checked) {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.variant-option:has(input:checked) small {
+  color: var(--bg);
+}
+
+.variant-option:has(input:focus-visible) {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.variant-option[data-disabled='true'] {
+  color: #b0b0b0;
+  border-color: var(--line);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.variant-option[data-disabled='true'] input {
+  cursor: not-allowed;
+}
+
+.product-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-quantity-label {
+  font-weight: 600;
+}
+
+.product-buy .add-status {
+  margin: -8px 0 0;
+}
+
+.product-perks {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  display: grid;
+  gap: 6px;
+  font-size: 0.92rem;
+}
+
+.product-perks li::before {
+  content: '✓';
+  display: inline-block;
+  width: 1.4em;
+  font-weight: 700;
+}
+
+.product-details {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.product-details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.product-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.product-details summary::after {
+  content: '+';
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.product-details[open] summary::after {
+  content: '–';
+}
+
+.product-details ul {
+  margin: 10px 0 0;
+  padding-left: 1.2em;
+  color: #3a3a3a;
+}
+
+.product-details .prose {
+  margin-top: 10px;
+}
+
+/* Tabeller som kan bli bredare än mobilskärmen scrollar i sidled i stället för att spräcka sidan */
+.table-wrap {
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.table-wrap table {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.table-wrap td,
+.table-wrap thead th:not(:first-child) {
+  text-align: center;
+}
+
+.table-wrap th[scope='row'] {
+  white-space: nowrap;
+}
+
+.related {
+  margin-top: 32px;
+}
+
+/* ---------- Klassbeställning ---------- */
+
+.class-intro p {
+  max-width: 44em;
+}
+
+.class-layout {
+  display: grid;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .class-layout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 48px;
+  }
+
+  .class-summary {
+    position: sticky;
+    top: 96px;
+  }
+}
+
+.class-section-title {
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+
+.class-products {
+  display: grid;
+  gap: 16px;
+}
+
+.class-product {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.class-product-head {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.class-product-head img {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 4px;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: var(--bg);
+}
+
+.class-product-head h3 {
+  margin: 0;
+}
+
+.class-product-head p {
+  margin: 2px 0 0;
+}
+
+.qty-grid {
+  display: grid;
+  gap: 8px;
+}
+
+@media (min-width: 560px) {
+  .qty-grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+  }
+}
+
+.qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.qty-row label {
+  font-weight: 600;
+}
+
+.stepper .qty-input {
+  width: 56px;
+  min-height: 36px;
+  padding: 4px;
+  border: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.stepper .qty-input:focus {
+  box-shadow: none;
+  outline: 2px solid var(--text);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+
+.stepper .qty-input::-webkit-outer-spin-button,
+.stepper .qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.class-summary {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.class-summary h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.class-summary .button-large {
+  width: 100%;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--soft);
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  display: block;
+  height: 100%;
+  width: var(--share, 0%);
+  background: var(--text);
+  transition: width 0.3s ease;
+}
+
+.class-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 0.92rem;
+}
+
+.class-lines li,
+.class-saving {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.class-saving {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* ---------- Formulär ---------- */
+
+.form {
+  display: grid;
+  gap: 20px;
+}
+
+.form fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.form legend {
+  font-weight: 650;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+  padding: 0;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+.field-row {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 560px) {
+  .field-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field-row.postal {
+    grid-template-columns: 140px 1fr;
+  }
+}
+
+label {
+  font-weight: 550;
+  font-size: 0.95rem;
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='tel'],
+input[type='password'],
+input[type='search'],
+select,
+textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1px solid #cfcfcf;
+  border-radius: var(--radius-small);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px; /* 16px hindrar iPhone från att zooma in */
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
+}
+
+[aria-invalid='true'] {
+  border-color: var(--error);
+}
+
+.field-error {
+  color: var(--error);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.checkbox {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 12px;
+  align-items: start;
+  font-weight: 400;
+}
+
+.checkbox input {
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0;
+  accent-color: var(--text);
+}
+
+/* Honeypot: dolt för människor, men inte med display:none (det ser robotar). */
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.notice {
+  border-radius: var(--radius-small);
+  padding: 14px 16px;
+  background: var(--soft);
+}
+
+.notice-error {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.notice-ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.notice ul {
+  margin: 6px 0 0;
+  padding-left: 1.2em;
+}
+
+.notice a {
+  color: inherit;
+}
+
+.order-summary {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.order-summary img {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  padding: 8px;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.15rem;
+  font-weight: 650;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+/* ---------- Orderbekräftelse ---------- */
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  background: var(--soft);
+}
+
+.status-badge[data-status='vantar_betalning'] {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border-color: transparent;
+}
+
+.status-badge[data-status='betald'],
+.status-badge[data-status='packad'],
+.status-badge[data-status='skickad'],
+.status-badge[data-status='levererad'] {
+  background: var(--ok-bg);
+  color: var(--ok);
+  border-color: transparent;
+}
+
+.status-badge[data-status='avbruten'] {
+  background: var(--error-bg);
+  color: var(--error);
+  border-color: transparent;
+}
+
+.details-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 20px;
+  margin: 0;
+}
+
+.details-list dt {
+  color: var(--muted);
+}
+
+.details-list dd {
+  margin: 0;
+}
+
+.pay-box {
+  border: 1px solid var(--text);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+}
+
+.qr-box {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  background: var(--soft);
+  border-radius: var(--radius);
+}
+
+.qr-box canvas,
+.qr-box img {
+  width: 240px;
+  height: 240px;
+  background: #fff;
+  border-radius: var(--radius-small);
+}
+
+.swish-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0;
+  text-align: left;
+}
+
+.swish-details dt {
+  color: var(--muted);
+}
+
+.swish-details dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ---------- Frågor & svar ---------- */
+
+.faq details {
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::after {
+  content: '+';
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.faq details[open] summary::after {
+  content: '–';
+}
+
+.faq details > div {
+  padding-top: 10px;
+  color: #333;
+}
+
+/* ---------- Sidfot ---------- */
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 64px;
+  padding: 40px 0 32px;
+}
+
+.footer-inner {
+  display: grid;
+  gap: 24px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.footer-links a {
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 760px) {
+  .footer-inner {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .footer-inner > .small {
+    grid-column: 1 / -1;
+  }
+}

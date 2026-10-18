@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Klassbeställning – Studentstil</title>
+    <meta name="description" content="Beställ studentoveraller, sprayfärg och spritpennor till hela klassen i en order. Klasspris från 25 overaller." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/logo/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
+    <link rel="preload" href="/api/products" as="fetch" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main">
+      <div class="container">
+        <header class="page-header class-intro">
+          <p class="eyebrow">För klassrepresentanter</p>
+          <h1>Klassbeställning</h1>
+          <p class="muted">Beställ till hela klassen i en enda order. Fyll i hur många overaller klassen behöver i varje storlek och hur många sprayburkar och pennset ni vill ha. <strong>Från 25 overaller får klassen klasspris</strong> på allt i beställningen.</p>
+        </header>
+
+        <p id="class-loading" class="muted" aria-live="polite">Hämtar produkter …</p>
+        <noscript><p class="notice">Slå på JavaScript för att kunna göra en klassbeställning.</p></noscript>
+
+        <form id="class-form" class="class-layout" novalidate hidden>
+          <div class="class-main form">
+            <div id="form-errors" class="notice notice-error" role="alert" tabindex="-1" hidden></div>
+
+            <section aria-labelledby="items">
+              <h2 id="items" class="class-section-title">1. Välj antal</h2>
+              <div id="class-products" class="class-products"></div>
+              <p id="items-error" class="field-error" hidden></p>
+            </section>
+
+            <fieldset>
+              <legend>2. Kontaktuppgifter</legend>
+              <div class="field">
+                <label for="name">Ditt namn (klassrepresentant)</label>
+                <input id="name" name="name" type="text" autocomplete="name" maxlength="100" aria-describedby="name-error" required />
+                <p id="name-error" class="field-error" hidden></p>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="email">E-postadress</label>
+                  <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" aria-describedby="email-error" required />
+                  <p id="email-error" class="field-error" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="phone">Mobilnummer</label>
+                  <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="070-123 45 67" aria-describedby="phone-error" required />
+                  <p id="phone-error" class="field-error" hidden></p>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="school">Skola</label>
+                  <input id="school" name="school" type="text" autocomplete="organization" maxlength="100" aria-describedby="school-error" required />
+                  <p id="school-error" class="field-error" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="schoolClass">Klass</label>
+                  <input id="schoolClass" name="schoolClass" type="text" autocomplete="off" autocapitalize="characters" maxlength="20" placeholder="t.ex. TE3A" aria-describedby="schoolClass-error" required />
+                  <p id="schoolClass-error" class="field-error" hidden></p>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>3. Leveransadress</legend>
+              <p class="hint">Oftast skolans adress. Vi kan också lämna beställningen direkt på skolan – skriv det i kommentaren.</p>
+              <div class="field">
+                <label for="street">Gatuadress</label>
+                <input id="street" name="street" type="text" autocomplete="street-address" maxlength="120" aria-describedby="street-error" required />
+                <p id="street-error" class="field-error" hidden></p>
+              </div>
+              <div class="field-row postal">
+                <div class="field">
+                  <label for="postalCode">Postnummer</label>
+                  <input id="postalCode" name="postalCode" type="text" autocomplete="postal-code" inputmode="numeric" maxlength="6" placeholder="123 45" aria-describedby="postalCode-error" required />
+                  <p id="postalCode-error" class="field-error" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="city">Ort</label>
+                  <input id="city" name="city" type="text" autocomplete="address-level2" maxlength="60" aria-describedby="city-error" required />
+                  <p id="city-error" class="field-error" hidden></p>
+                </div>
+              </div>
+              <div class="field">
+                <label for="comment">Övrig kommentar <span class="optional">(valfritt)</span></label>
+                <textarea id="comment" name="comment" maxlength="500" placeholder="T.ex. önskat leveransdatum eller att ni hämtar på skolan" aria-describedby="comment-error"></textarea>
+                <p id="comment-error" class="field-error" hidden></p>
+              </div>
+            </fieldset>
+
+            <!-- Honeypot mot spam: lämna tomt. Dolt för människor. -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="website">Webbplats</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div class="field">
+              <label class="checkbox">
+                <input id="acceptTerms" name="acceptTerms" type="checkbox" aria-describedby="acceptTerms-error" required />
+                <span>Jag godkänner <a href="/kopvillkor/" target="_blank" rel="noopener">köpvillkoren</a> och att mina uppgifter behandlas enligt <a href="/integritetspolicy/" target="_blank" rel="noopener">integritetspolicyn</a>.</span>
+              </label>
+              <p id="acceptTerms-error" class="field-error" hidden></p>
+            </div>
+          </div>
+
+          <aside class="class-summary" aria-labelledby="class-summary-heading">
+            <h2 id="class-summary-heading">Sammanfattning</h2>
+            <div id="class-progress" aria-live="polite"></div>
+            <div id="class-totals" aria-live="polite"></div>
+            <button id="submit" class="button button-large" type="submit">Skicka klassbeställning</button>
+            <p class="hint">Efter att du skickat beställningen betalar du hela summan med Swish på nästa sida.</p>
+          </aside>
+        </form>
+      </div>
+    </main>
+    <!-- @footer -->
+    <script type="module" src="/src/client/pages/classOrder.ts"></script>
+  </body>
+</html>

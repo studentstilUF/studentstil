@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Produkter – Studentstil</title>
+    <meta name="description" content="Alla produkter från Studentstil: studentoverall, sprayfärg och spritpennor. Betala med Swish." />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/logo/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
+    <link rel="preload" href="/api/products" as="fetch" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main">
+      <div class="container">
+        <header class="page-header">
+          <h1>Produkter</h1>
+          <p class="muted">Välj en produkt för att beställa. Osäker på storleken? Se <a href="/vanliga-fragor/#storleksguide">storleksguiden</a>.</p>
+        </header>
+        <div id="products" class="product-grid" aria-live="polite"></div>
+        <noscript><p class="notice">Slå på JavaScript för att se produkterna och beställa.</p></noscript>
+      </div>
+    </main>
+    <!-- @footer -->
+    <script type="module" src="/src/client/pages/shop.ts"></script>
+  </body>
+</html>

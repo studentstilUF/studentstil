@@ -1,0 +1,94 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // Lint-regler enligt SI:s riktlinjer (knowledgebase/frontend.md), utan React-delarna
+  // eftersom sajten är skriven i ren TypeScript utan ramverk.
+  "plugins": ["typescript", "import", "unicorn"],
+
+  "options": { "typeAware": true, "typeCheck": true },
+  "env": { "browser": true, "node": true, "es2024": true },
+
+  "categories": { "correctness": "error" },
+
+  "rules": {
+    // Anti-any
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+
+    // Typmedvetna: hindra att any läcker
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/no-unsafe-function-type": "error",
+    "typescript/no-unsafe-type-assertion": "error",
+
+    // Typmedvetna: async-korrekthet
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/await-thenable": "error",
+    "typescript/require-await": "error",
+    "typescript/return-await": ["error", "in-try-catch"],
+    "typescript/prefer-promise-reject-errors": "error",
+
+    // Typmedvetna: extra noggrannhet
+    "typescript/switch-exhaustiveness-check": "error",
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-unnecessary-boolean-literal-compare": "error",
+    "typescript/no-unsafe-enum-comparison": "error",
+    "typescript/no-confusing-void-expression": "error",
+    "typescript/strict-void-return": "error",
+    "typescript/restrict-template-expressions": "error",
+    "typescript/restrict-plus-operands": "error",
+    "typescript/strict-boolean-expressions": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/only-throw-error": "error",
+    "typescript/no-deprecated": "error",
+    "typescript/ban-ts-comment": "error",
+
+    // Typhygien
+    "typescript/consistent-type-imports": ["error", { "prefer": "type-imports" }],
+    "typescript/consistent-type-definitions": ["error", "type"],
+    "typescript/explicit-function-return-type": [
+      "error",
+      {
+        "allowExpressions": true,
+        "allowTypedFunctionExpressions": true,
+        "allowHigherOrderFunctions": true,
+        "allowIIFEs": true
+      }
+    ],
+
+    // Regler som fångar riktiga buggar
+    "eslint/array-callback-return": "error",
+    "eslint/no-self-compare": "error",
+    "eslint/no-unmodified-loop-condition": "error",
+    "eslint/no-promise-executor-return": "error",
+    "eslint/no-loop-func": "error",
+    "eslint/no-shadow": "error",
+    "eslint/no-implied-eval": "error",
+    "eslint/radix": "error",
+    "oxc/no-accumulating-spread": "error",
+    "eslint/require-unicode-regexp": "error",
+    "eslint/eqeqeq": ["error", "always", { "null": "ignore" }],
+    "eslint/max-lines": ["error", { "max": 500, "skipBlankLines": true, "skipComments": true }],
+    "eslint/max-lines-per-function": [
+      "error",
+      { "max": 400, "skipBlankLines": true, "skipComments": true }
+    ],
+
+    // Importer
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "import/no-duplicates": "error",
+    "import/first": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-named-as-default": "error",
+
+    // Filnamn: camelCase (inga .tsx-komponenter i det här projektet)
+    "unicorn/filename-case": ["error", { "case": "camelCase" }]
+  },
+
+  "ignorePatterns": ["dist", "coverage", ".netlify", "node_modules"]
+}

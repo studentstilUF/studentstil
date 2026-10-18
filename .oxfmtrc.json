@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "semi": true,
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "sortImports": true,
+  "sortPackageJson": true,
+  "ignorePatterns": [
+    "dist",
+    "coverage",
+    ".netlify",
+    "pnpm-lock.yaml",
+    "*.html",
+    "*.md",
+    "*.css",
+    "*.sql"
+  ]
+}

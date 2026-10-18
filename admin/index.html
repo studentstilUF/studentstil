@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin – Studentstil</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/logo/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <link rel="stylesheet" href="/src/styles/admin.css" />
+  </head>
+  <body class="admin">
+    <main id="main">
+      <!-- Inloggning -->
+      <section id="login-view" class="container login" hidden>
+        <img class="login-crown" src="/logo/krona-stor.png" alt="" width="581" height="360" />
+        <p class="logo">Studentstil</p>
+        <h1>Logga in</h1>
+        <form id="login-form" class="form" novalidate>
+          <div class="field">
+            <label for="username">Användarnamn</label>
+            <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" required />
+          </div>
+          <div class="field">
+            <label for="password">Lösenord</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <p id="login-error" class="notice notice-error" role="alert" hidden></p>
+          <button class="button" type="submit">Logga in</button>
+        </form>
+        <p class="small"><a href="/">← Tillbaka till butiken</a></p>
+      </section>
+
+      <!-- Inloggad -->
+      <section id="app-view" hidden>
+        <header class="admin-header">
+          <div class="container admin-header-inner">
+            <p class="logo"><img class="logo-crown" src="/logo/krona.png" alt="" width="52" height="32" /><span>Studentstil</span> <span id="role-badge" class="role-badge"></span></p>
+            <div class="admin-actions">
+              <a class="button button-small button-secondary" href="/">Till butiken</a>
+              <button id="refresh" class="button button-small button-secondary" type="button">Uppdatera</button>
+              <button id="logout" class="button button-small button-secondary" type="button">Logga ut</button>
+            </div>
+          </div>
+          <div class="container">
+            <div class="tabs" role="tablist" aria-label="Adminpanel">
+              <button role="tab" type="button" data-tab="orders" aria-selected="true" aria-controls="panel-orders">Ordrar</button>
+              <button role="tab" type="button" data-tab="summary" aria-selected="false" aria-controls="panel-summary" tabindex="-1">Sammanställning</button>
+              <button role="tab" type="button" data-tab="qr" aria-selected="false" aria-controls="panel-qr" tabindex="-1">QR-koder</button>
+            </div>
+          </div>
+        </header>
+
+        <div class="container">
+          <p id="demo-banner" class="notice demo-banner" hidden><strong>Demoläge.</strong> All data här är påhittad och ändringar sparas inte. Inga riktiga kunduppgifter visas.</p>
+          <p id="load-error" class="notice notice-error" role="alert" hidden></p>
+
+          <!-- Ordrar -->
+          <section id="panel-orders" role="tabpanel" aria-label="Ordrar">
+            <div class="filters">
+              <div class="field filter-search">
+                <label for="filter-search">Sök</label>
+                <input id="filter-search" type="search" placeholder="Namn, e-post, ordernummer, adress …" />
+              </div>
+              <div class="field"><label for="filter-status">Status</label><select id="filter-status"></select></div>
+              <div class="field"><label for="filter-class">Klass</label><select id="filter-class"></select></div>
+              <div class="field"><label for="filter-size">Vara</label><select id="filter-size"></select></div>
+              <div class="field"><label for="filter-source">Typ / källa</label><select id="filter-source"></select></div>
+            </div>
+            <div class="toolbar">
+              <p id="order-count" class="muted small" aria-live="polite"></p>
+              <button id="export-csv" class="button button-small" type="button">Exportera CSV (Excel)</button>
+            </div>
+            <div class="table-scroll">
+              <table id="orders-table" class="data-table orders-table">
+                <thead>
+                  <tr>
+                    <th scope="col"><button type="button" data-sort="orderNumber">Ordernr</button></th>
+                    <th scope="col"><button type="button" data-sort="createdAt">Datum</button></th>
+                    <th scope="col"><button type="button" data-sort="name">Namn</button></th>
+                    <th scope="col"><button type="button" data-sort="schoolClass">Klass</button></th>
+                    <th scope="col">Varor (produkt, storlek/färg)</th>
+                    <th scope="col">Adress</th>
+                    <th scope="col">E-post</th>
+                    <th scope="col" class="number"><button type="button" data-sort="totalSek">Belopp</button></th>
+                    <th scope="col"><button type="button" data-sort="source">Källa</button></th>
+                    <th scope="col"><button type="button" data-sort="status">Status</button></th>
+                  </tr>
+                </thead>
+                <tbody id="orders-body"></tbody>
+              </table>
+            </div>
+            <p class="muted small">Läge A (Swish Företag): kontrollera inbetalningen i Swish-appen – meddelandet är ordernumret – och sätt sedan status till <strong>Betald</strong>. Kunden får då ett mejl automatiskt, och likaså när du sätter <strong>Skickad</strong>.</p>
+          </section>
+
+          <!-- Sammanställning -->
+          <section id="panel-summary" role="tabpanel" aria-label="Sammanställning" hidden>
+            <div id="summary-root"></div>
+          </section>
+
+          <!-- QR-koder -->
+          <section id="panel-qr" role="tabpanel" aria-label="QR-koder" hidden>
+            <div class="poster-layout">
+              <form id="poster-form" class="form">
+                <div class="field">
+                  <label for="poster-place">Plats eller event</label>
+                  <input id="poster-place" type="text" placeholder="t.ex. skolan, mässa, cafeterian" aria-describedby="poster-place-hint" />
+                  <p id="poster-place-hint" class="hint">Lämna tomt för en allmän QR-kod (källa ”qr”). Ordrar som kommer via koden märks med källan nedan.</p>
+                </div>
+                <div class="field">
+                  <label for="poster-title">Rubrik</label>
+                  <input id="poster-title" type="text" value="Beställ din studentoverall här" />
+                </div>
+                <div class="field">
+                  <label for="poster-subtitle">Underrubrik</label>
+                  <input id="poster-subtitle" type="text" value="Overall, sprayfärg och spritpennor – klart på en minut." />
+                </div>
+                <div class="field">
+                  <label for="poster-format">Format</label>
+                  <select id="poster-format">
+                    <option value="A4">A4 (affisch)</option>
+                    <option value="A5">A5 (bordsskylt/flyer)</option>
+                  </select>
+                </div>
+                <p class="small">QR-koden leder till:<br /><code id="poster-url"></code></p>
+                <div class="toolbar">
+                  <button id="poster-png" class="button button-small" type="button">Ladda ner PNG</button>
+                  <button id="poster-pdf" class="button button-small" type="button">Ladda ner PDF</button>
+                </div>
+              </form>
+              <div class="poster-preview">
+                <canvas id="poster-canvas" role="img" aria-label="Förhandsvisning av affischen"></canvas>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/client/admin/main.ts"></script>
+  </body>
+</html>
