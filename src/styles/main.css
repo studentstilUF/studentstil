@@ -1627,7 +1627,7 @@ textarea:focus {
   z-index: 1;
   display: grid;
   place-items: center;
-  color: #fff;
+  color: rgb(255 255 255 / 0.7);
   font-weight: 900;
   font-size: clamp(2rem, 9vw, 6rem);
   letter-spacing: 0.04em;
