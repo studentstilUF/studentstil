@@ -3,6 +3,7 @@ import type { Product } from '../../shared/apiTypes.ts';
 import { formatSek } from '../../shared/format.ts';
 import { MAX_QUANTITY } from '../../shared/orderInput.ts';
 import { addToCart } from '../cart.ts';
+import { colorSwatch } from '../colorSwatch.ts';
 import { byId, h, nodes } from '../dom.ts';
 import { productGallery } from '../gallery.ts';
 import { type SizeGuide, productInfo } from '../productInfo.ts';
@@ -34,6 +35,7 @@ function variantPicker(product: Product, onChange: () => void): HTMLFieldSetElem
       'label',
       { class: 'variant-option', 'data-disabled': String(!size.available) },
       input,
+      colorSwatch(size.size),
       h('span', {}, size.size),
       size.fewLeft ? h('small', {}, 'få kvar') : null,
       size.available ? null : h('span', { class: 'visually-hidden' }, ' (slut i lager)'),

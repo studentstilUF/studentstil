@@ -186,10 +186,24 @@ p {
 .site-nav {
   grid-area: nav;
   display: flex;
-  gap: 20px;
+  gap: 18px;
   overflow-x: auto;
   white-space: nowrap;
   font-size: 0.95rem;
+  /* Menyn går att svepa i sidled på smala skärmar, men utan grå rullningslist. */
+  scrollbar-width: none;
+}
+
+.site-nav::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 759px) {
+  /* Tonar ut högerkanten så att man ser att menyn fortsätter. */
+  .site-nav {
+    mask-image: linear-gradient(to right, #000 85%, transparent);
+    padding-right: 24px;
+  }
 }
 
 .site-nav a {
@@ -327,7 +341,13 @@ main:focus {
 }
 
 .hero {
-  padding: 56px 0 48px;
+  padding: 32px 0 40px;
+}
+
+@media (min-width: 760px) {
+  .hero {
+    padding: 56px 0 48px;
+  }
 }
 
 .hero p {
@@ -1692,4 +1712,22 @@ textarea:focus {
 .order-track li[data-state='current']::before {
   border-color: var(--text);
   box-shadow: 0 0 0 4px rgb(0 0 0 / 0.08);
+}
+
+/* ---------- Färgprickar (sprayfärgens färger) ---------- */
+
+.swatch {
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15);
+  vertical-align: -2px;
+  margin-right: 8px;
+}
+
+.variant-option .swatch {
+  margin-right: 0;
 }

@@ -12,6 +12,7 @@ import {
 import { formatSek } from '../../shared/format.ts';
 import { MAX_CLASS_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
 import { ApiError, apiPost } from '../api.ts';
+import { colorSwatch } from '../colorSwatch.ts';
 import { byId, h, nodes } from '../dom.ts';
 import { fetchProducts, hasVariantChoice } from '../products.ts';
 import { currentSource } from '../source.ts';
@@ -109,6 +110,7 @@ function quantityRow(product: Product, size: string, fewLeft: boolean): HTMLElem
     h(
       'label',
       { for: id },
+      hasVariantChoice(product) ? colorSwatch(size) : null,
       hasVariantChoice(product) ? size : 'Antal paket',
       fewLeft ? h('small', { class: 'muted' }, ' få kvar') : null,
     ),
