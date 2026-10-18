@@ -109,7 +109,11 @@ function cartLine(line: CartLine): HTMLLIElement {
       ...(product !== undefined && !hasVariantChoice(product)
         ? []
         : [
-            h('span', { class: 'muted small' }, `${product?.variantLabel ?? 'Variant'}: ${line.size}`),
+            h(
+              'span',
+              { class: 'muted small' },
+              `${product?.variantLabel ?? 'Variant'}: ${line.size}`,
+            ),
             h('br'),
           ]),
       available
