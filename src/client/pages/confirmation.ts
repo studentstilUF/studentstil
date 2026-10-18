@@ -24,7 +24,7 @@ const returnedFromSwish = params.has('swish');
 
 const STATUS_TEXT: Record<OrderStatus, string> = {
   vantar_betalning:
-    'Varorna är reserverade åt dig. Betala med Swish för att slutföra beställningen.',
+    'Varorna är reserverade åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi kontrollerar inkomna Swish-betalningar löpande, och den här sidan uppdateras automatiskt när betalningen är registrerad. Du får även en bekräftelse via e-post.',
   betald: 'Tack! Vi har tagit emot din betalning och börjar packa din beställning.',
   packad: 'Din beställning är packad och skickas inom kort.',
   skickad: 'Din beställning är skickad. Grattis till studenten!',
@@ -188,7 +188,7 @@ async function startPayment(button: HTMLButtonElement, result: HTMLElement): Pro
     } else {
       showQr(result, start);
     }
-    schedulePoll(start.mode === 'commerce' ? 3000 : 20_000);
+    schedulePoll('vantar_betalning', start.mode === 'commerce' ? 3000 : 20_000);
   } catch (error) {
     result.replaceChildren(
       h(
@@ -218,7 +218,7 @@ function manualPayButton(
       ...swishLabel(),
     );
     link.addEventListener('click', () => {
-      schedulePoll(20_000);
+      schedulePoll('vantar_betalning', 20_000);
       const showQrButton = h(
         'button',
         { type: 'button', class: 'link-button small' },
@@ -246,7 +246,7 @@ function manualPayButton(
   );
   button.addEventListener('click', () => {
     showManualQr(result, swish);
-    schedulePoll(20_000);
+    schedulePoll('vantar_betalning', 20_000);
   });
   return button;
 }
@@ -290,6 +290,45 @@ function paymentSection(order: PublicOrder): HTMLElement {
   );
 }
 
+/** Stegen i "Följ din order", i ordning. */
+const TRACK_STEPS: readonly { status: OrderStatus; label: string }[] = [
+  { status: 'vantar_betalning', label: 'Beställning mottagen' },
+  { status: 'betald', label: 'Betalning bekräftad' },
+  { status: 'packad', label: 'Packad' },
+  { status: 'skickad', label: 'Skickad' },
+  { status: 'levererad', label: 'Levererad' },
+];
+
+/** "Följ din order": vilka steg som är klara och vilket som är aktuellt. */
+function tracker(order: PublicOrder): HTMLElement | null {
+  if (order.status === 'avbruten') return null;
+  const current = TRACK_STEPS.findIndex((step) => step.status === order.status);
+  return h(
+    'section',
+    { class: 'section', 'aria-labelledby': 'track-heading' },
+    h('h2', { id: 'track-heading' }, 'Följ din order'),
+    h(
+      'ol',
+      { class: 'order-track' },
+      ...TRACK_STEPS.map((step, i) =>
+        h(
+          'li',
+          {
+            'data-state': i < current ? 'done' : i === current ? 'current' : 'todo',
+            'aria-current': i === current ? 'step' : false,
+          },
+          step.label,
+        ),
+      ),
+    ),
+    h(
+      'p',
+      { class: 'muted small' },
+      'Sidan uppdateras automatiskt när statusen ändras. Du kan också öppna den igen via länken i ditt bekräftelsemejl.',
+    ),
+  );
+}
+
 /** Rubriken: tack först när betalningen är gjord, inte innan. */
 function heading(order: PublicOrder): string {
   if (order.status === 'vantar_betalning') return 'Slutför din beställning';
@@ -319,6 +358,7 @@ function render(order: PublicOrder): void {
       ),
       h('p', { 'aria-live': 'polite' }, STATUS_TEXT[order.status]),
       order.status === 'vantar_betalning' ? paymentSection(order) : null,
+      tracker(order),
       h(
         'section',
         { class: 'section', 'aria-labelledby': 'summary-heading' },
@@ -336,38 +376,53 @@ function render(order: PublicOrder): void {
   );
 }
 
-function schedulePoll(delayMs: number): void {
+function schedulePoll(currentStatus: OrderStatus, delayMs: number): void {
   window.clearTimeout(pollTimer);
   pollTimer = window.setTimeout(() => {
-    void poll(delayMs);
+    void poll(currentStatus, delayMs);
   }, delayMs);
 }
 
-/** Kontrollerar med jämna mellanrum om ordern blivit betald (slutar efter ett tag). */
-async function poll(delayMs: number): Promise<void> {
+/** Ordern är klar och ändras inte mer – då behöver sidan inte fråga igen. */
+function isFinal(status: OrderStatus): boolean {
+  return status === 'levererad' || status === 'avbruten';
+}
+
+/** Hur ofta sidan frågar om ny status. Swish Handel bekräftar på sekunder. */
+function pollDelay(order: PublicOrder): number {
+  return order.status === 'vantar_betalning' && order.paymentMode === 'commerce' ? 3000 : 20_000;
+}
+
+/**
+ * "Live"-uppdatering: frågar med jämna mellanrum efter orderns status och ritar
+ * om sidan när den ändrats (t.ex. när vi registrerat betalningen). Slutar efter
+ * ungefär en timme, eller när ordern är levererad/avbruten.
+ */
+async function poll(currentStatus: OrderStatus, delayMs: number): Promise<void> {
   pollCount++;
-  if (pollCount > 100 || document.hidden) {
-    if (document.hidden) schedulePoll(delayMs);
+  if (pollCount > 180) return;
+  if (document.hidden) {
+    schedulePoll(currentStatus, delayMs);
     return;
   }
   try {
     const order = await apiGet(orderStatusUrl(), PublicOrderSchema);
-    if (order.status !== 'vantar_betalning') {
+    if (order.status !== currentStatus) {
       render(order);
+      if (!isFinal(order.status)) schedulePoll(order.status, pollDelay(order));
       return;
     }
   } catch {
     // Tillfälligt fel: försök igen vid nästa intervall.
   }
-  schedulePoll(delayMs);
+  schedulePoll(currentStatus, delayMs);
 }
 
 async function init(): Promise<void> {
   try {
     const order = await apiGet(orderStatusUrl(), PublicOrderSchema);
     render(order);
-    if (order.status === 'vantar_betalning' && returnedFromSwish)
-      schedulePoll(order.paymentMode === 'commerce' ? 3000 : 20_000);
+    if (!isFinal(order.status)) schedulePoll(order.status, pollDelay(order));
   } catch (error) {
     container.replaceChildren(
       h('h1', {}, 'Beställningen hittades inte'),

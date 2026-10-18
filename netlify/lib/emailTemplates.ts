@@ -81,17 +81,24 @@ export function orderConfirmationEmail(
       ? 'Betala med Swish via länken nedan.'
       : `Har du inte betalat än? Swisha ${formatSek(order.totalSek)} till ${formatSwishNumber(manual.payee)} och skriv ${order.orderNumber} som meddelande. Har du redan betalat behöver du inte göra något – vi mejlar dig när betalningen är registrerad.`;
 
+  const intro =
+    'Vi har tagit emot din beställning och reserverat varorna åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi kontrollerar inkomna Swish-betalningar löpande och meddelar dig via e-post så snart betalningen är registrerad.';
+  const trackInfo =
+    'Under "Följ din order" ser du hela tiden om vi har registrerat din betalning och när ordern packas och skickas. Sidan uppdateras automatiskt.';
+
   return {
     to: order.email,
-    subject: `Slutför din beställning ${order.orderNumber} – betala med Swish`,
+    subject: `Orderbekräftelse ${order.orderNumber} – väntar på betalning`,
     html: layout(
-      'Slutför din beställning',
-      `<p>Varorna nedan är reserverade åt dig. Beställningen skickas när betalningen är klar.</p>
+      'Orderbekräftelse',
+      `<p>${escapeHtml(intro)}</p>
 ${summaryHtml(order)}
 ${payHtml}
-${button(orderUrl, 'Betala med Swish')}`,
+${button(orderUrl, 'Betala med Swish')}
+<p>${escapeHtml(trackInfo)}</p>
+${button(orderUrl, 'Följ din order')}`,
     ),
-    text: `Slutför din beställning\n\nVarorna nedan är reserverade åt dig. Beställningen skickas när betalningen är klar.\n\n${summaryText(order)}\n\n${payText}\n\nBetala med Swish: ${orderUrl}\n\nStudentstil`,
+    text: `Orderbekräftelse\n\n${intro}\n\n${summaryText(order)}\n\n${payText}\n\nBetala med Swish: ${orderUrl}\n\n${trackInfo}\nFölj din order: ${orderUrl}\n\nStudentstil`,
   };
 }
 

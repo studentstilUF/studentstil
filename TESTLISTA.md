@@ -71,6 +71,8 @@ Gå igenom hela listan på den publicerade sajten (eller en deploy preview) **b�
 
 ## Beställning och e-post
 
+- [ ] Orderbekräftelsesidan visar **Följ din order**. Sätt ordern till Betald i admin: inom ca 20 sekunder byts steget till "Betalning bekräftad" utan att sidan laddas om.
+
 - [ ] En testbeställning ger ordernummer `SS-2026-0001` (sedan 0002 …) och leder till orderbekräftelsen.
 - [ ] Lagret i Supabase minskar med rätt antal för varje vara. Tabellen `order_items` har en rad per vara.
 - [ ] Kunden får ett bekräftelsemejl (inte i skräpposten) med ordernummer, sammanfattning och Swish-instruktioner.

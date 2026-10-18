@@ -312,7 +312,7 @@ Netlify skaffar ett gratis certifikat från Let's Encrypt automatiskt när DNS p
 4. `EMAIL_FROM` måste vara en adress på den verifierade domänen, t.ex. `Studentstil <order@studentstil.se>`. Den adressen behöver inte ha någon inkorg. Svarar en kund på ett mejl hamnar svaret hos `SHOP_EMAIL` (studentstilkungsbacka@gmail.com). En Gmail-adress kan **inte** vara avsändare via Resend, eftersom Resend bara skickar från domäner ni själva äger.
 
 Mejl som skickas:
-- **"Slutför din beställning"** direkt när ordern skapas, med Swish-länk och sammanfattning. Det står inget tack än, eftersom kunden inte har betalat.
+- **"Orderbekräftelse … – väntar på betalning"** direkt när ordern skapas, med sammanfattning, Swish-länk och knappen **Följ din order**. Det står inget tack än, eftersom kunden inte har betalat. Orderbekräftelsesidan visar stegen Beställning mottagen → Betalning bekräftad → Packad → Skickad → Levererad och uppdateras automatiskt när ni ändrar status i admin.
 - notis till `SHOP_EMAIL` om den nya ordern
 - **"Tack för din beställning"** när ordern blir **Betald**
 - **"På väg"** när ordern blir **Skickad** Texterna finns i `netlify/lib/emailTemplates.ts`.

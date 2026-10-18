@@ -1647,3 +1647,49 @@ textarea:focus {
   text-transform: uppercase;
   color: #fff;
 }
+
+/* ---------- Följ din order (orderbekräftelsen) ---------- */
+
+.order-track {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.order-track li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+}
+
+.order-track li::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--bg);
+}
+
+.order-track li[data-state='done'],
+.order-track li[data-state='current'] {
+  color: var(--text);
+}
+
+.order-track li[data-state='done']::before {
+  border-color: var(--text);
+  background: var(--text);
+}
+
+.order-track li[data-state='current'] {
+  font-weight: 600;
+}
+
+.order-track li[data-state='current']::before {
+  border-color: var(--text);
+  box-shadow: 0 0 0 4px rgb(0 0 0 / 0.08);
+}
