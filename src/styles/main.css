@@ -1634,3 +1634,16 @@ textarea:focus {
   line-height: 1;
   text-shadow: 0 2px 12px rgb(0 0 0 / 0.3);
 }
+
+.home-photo figcaption {
+  align-content: center;
+  gap: 0.6rem;
+}
+
+.home-photo-sub {
+  font-size: clamp(0.85rem, 2vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
