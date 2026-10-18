@@ -1755,3 +1755,37 @@ textarea:focus {
 .order-track li[data-state='done']:not(:last-child)::after {
   background: var(--text);
 }
+
+/* ---------- Startsidans topp: text till vänster, overallen till höger (dator) ---------- */
+
+.hero-product {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 48px;
+  }
+
+  .hero-product {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .hero-product img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.4s ease;
+  }
+
+  .hero-product:hover img {
+    transform: scale(1.03);
+  }
+}
