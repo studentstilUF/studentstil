@@ -446,7 +446,7 @@ main:focus {
 
 @media (min-width: 760px) {
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
   }
 }
@@ -1788,4 +1788,13 @@ textarea:focus {
   .hero-product:hover img {
     transform: scale(1.03);
   }
+}
+
+/* Produktkort i samma rad får namn och pris på samma höjd, även om bara
+   vissa kort har miniatyrbilder (subgrid: bild-raden och text-raden delas). */
+.product-grid .product-card {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 0;
 }
