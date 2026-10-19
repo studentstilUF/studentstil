@@ -1798,3 +1798,15 @@ textarea:focus {
   grid-template-rows: subgrid;
   row-gap: 0;
 }
+
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swatch-row .swatch {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}

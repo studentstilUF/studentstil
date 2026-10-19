@@ -3,6 +3,7 @@ import { type Product, ProductsResponseSchema } from '../shared/apiTypes.ts';
 import { formatSek } from '../shared/format.ts';
 import { apiGet } from './api.ts';
 import { addToCart } from './cart.ts';
+import { colorSwatch } from './colorSwatch.ts';
 import { h } from './dom.ts';
 import { productGallery } from './gallery.ts';
 
@@ -100,6 +101,22 @@ function addToCartForm(product: Product): HTMLElement {
   return form;
 }
 
+/** En rad med färgprickar för produkter med färgvarianter (t.ex. sprayfärgen). */
+function swatchRow(product: Product): HTMLElement | null {
+  const swatches = availableSizes(product).flatMap((size) => {
+    const swatch = colorSwatch(size);
+    if (swatch === null) return [];
+    swatch.setAttribute('title', size);
+    return [swatch];
+  });
+  if (swatches.length === 0) return null;
+  return h(
+    'div',
+    { class: 'swatch-row', role: 'img', 'aria-label': `Färger: ${availableSizes(product).join(', ')}` },
+    ...swatches,
+  );
+}
+
 export function productCard(product: Product): HTMLElement {
   const inStock = availableSizes(product).length > 0;
   return h(
@@ -117,6 +134,7 @@ export function productCard(product: Product): HTMLElement {
         h('span', { class: 'price' }, formatSek(product.priceSek)),
         h('span', { class: 'muted small' }, variantSummary(product)),
       ),
+      swatchRow(product),
       inStock
         ? addToCartForm(product)
         : h('span', { class: 'button button-secondary', 'aria-disabled': 'true' }, 'Slut i lager'),
