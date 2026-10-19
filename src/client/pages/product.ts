@@ -37,7 +37,6 @@ function variantPicker(product: Product, onChange: () => void): HTMLFieldSetElem
       input,
       colorSwatch(size.size),
       h('span', {}, size.size),
-      size.fewLeft ? h('small', {}, 'få kvar') : null,
       size.available ? null : h('span', { class: 'visually-hidden' }, ' (slut i lager)'),
     );
   });

@@ -59,7 +59,7 @@ function addToCartForm(product: Product): HTMLElement {
     ...(sizes.length === 1
       ? []
       : [h('option', { value: '' }, `Välj ${product.variantLabel.toLowerCase()}`)]),
-    ...sizes.map((s) => h('option', { value: s.size }, s.fewLeft ? `${s.size} (få kvar)` : s.size)),
+    ...sizes.map((s) => h('option', { value: s.size }, s.size)),
   );
   const status = h('p', {
     id: `${selectId}-status`,

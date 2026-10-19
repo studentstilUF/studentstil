@@ -78,7 +78,7 @@ function currentLines(): ClassLine[] {
 }
 
 /** En rad: storlek/färg, minus-knapp, sifferfält och plus-knapp. */
-function quantityRow(product: Product, size: string, fewLeft: boolean): HTMLElement {
+function quantityRow(product: Product, size: string): HTMLElement {
   const id = `q-${product.id}-${size}`.replace(/[^\w-]/gu, '_');
   const input = h('input', {
     id,
@@ -119,7 +119,6 @@ function quantityRow(product: Product, size: string, fewLeft: boolean): HTMLElem
       { for: id },
       hasVariantChoice(product) ? colorSwatch(size) : null,
       hasVariantChoice(product) ? size : 'Antal paket',
-      fewLeft ? h('small', { class: 'muted' }, ' få kvar') : null,
     ),
     h('div', { class: 'stepper' }, minus, input, plus),
   );
@@ -162,7 +161,7 @@ function productSection(product: Product): HTMLElement {
       : h(
           'div',
           { class: 'qty-grid' },
-          ...sizes.map((s) => quantityRow(product, s.size, s.fewLeft)),
+          ...sizes.map((s) => quantityRow(product, s.size)),
         ),
   );
 }
