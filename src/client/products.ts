@@ -112,7 +112,11 @@ function swatchRow(product: Product): HTMLElement | null {
   if (swatches.length === 0) return null;
   return h(
     'div',
-    { class: 'swatch-row', role: 'img', 'aria-label': `Färger: ${availableSizes(product).join(', ')}` },
+    {
+      class: 'swatch-row',
+      role: 'img',
+      'aria-label': `Färger: ${availableSizes(product).join(', ')}`,
+    },
     ...swatches,
   );
 }

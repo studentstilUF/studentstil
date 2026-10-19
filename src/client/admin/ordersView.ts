@@ -1,7 +1,7 @@
-/** Orderlistan i adminpanelen: sök, filter, sortering, statusändring och CSV-export. */
-import { deliveryLabel } from '../../shared/delivery.ts';
 import type { Order, OrderItem } from '../../shared/apiTypes.ts';
 import { toCsv } from '../../shared/csv.ts';
+/** Orderlistan i adminpanelen: sök, filter, sortering, statusändring och CSV-export. */
+import { deliveryLabel } from '../../shared/delivery.ts';
 import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format.ts';
 import { ORDER_STATUSES, type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
 import { sourceChannel } from '../../shared/source.ts';

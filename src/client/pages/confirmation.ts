@@ -5,13 +5,13 @@ import {
   type SwishStart,
   SwishStartSchema,
 } from '../../shared/apiTypes.ts';
+import { deliveryLabel, shippingLabel } from '../../shared/delivery.ts';
 import {
   formatDateTime,
   formatPostalCode,
   formatSek,
   formatSwishNumber,
 } from '../../shared/format.ts';
-import { deliveryLabel, shippingLabel } from '../../shared/delivery.ts';
 import { type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
 import { apiGet, apiPost } from '../api.ts';
 import { byId, h, isMobileDevice, nodes } from '../dom.ts';

@@ -207,7 +207,11 @@ function renderSummary(): void {
         h('span', {}, 'Att betala'),
         h('span', {}, formatSek(price.totalSek)),
       ),
-      h('p', { class: 'muted small' }, 'Priserna är inklusive moms. Leveransen till skolan är gratis.'),
+      h(
+        'p',
+        { class: 'muted small' },
+        'Priserna är inklusive moms. Leveransen till skolan är gratis.',
+      ),
     ),
   );
 }
