@@ -9,7 +9,7 @@ import {
   OVERALL_PRODUCT_ID,
   priceClassOrder,
 } from '../../shared/classOrder.ts';
-import { shippingFee } from '../../shared/delivery.ts';
+import { CLASS_SHIPPING_PER_OVERALL_SEK, shippingFee } from '../../shared/delivery.ts';
 import { formatSek } from '../../shared/format.ts';
 import { MAX_CLASS_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
 import { ApiError, apiPost } from '../api.ts';
@@ -185,7 +185,8 @@ function renderSummary(): void {
   );
 
   const chosen = delivery?.selected() ?? null;
-  const shipping = chosen === null || price.lines.length === 0 ? 0 : shippingFee(chosen);
+  const shipping =
+    chosen === null || price.lines.length === 0 ? 0 : shippingFee(chosen, 'klass', price.overalls);
   const shippingText =
     chosen === null ? 'Välj leverans' : shipping === 0 ? 'Gratis' : formatSek(shipping);
   totals.replaceChildren(
@@ -333,6 +334,7 @@ async function init(): Promise<void> {
     container: deliveryContainer,
     postalInput,
     homeText: 'Vi skickar beställningen till adressen ovan.',
+    homePrice: `${String(CLASS_SHIPPING_PER_OVERALL_SEK)} kr/overall`,
     askSchoolForHome: true,
     onChange: update,
   });

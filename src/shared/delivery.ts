@@ -12,6 +12,12 @@ import * as v from 'valibot';
 /** Fraktkostnad i kronor när paketet skickas hem. */
 export const SHIPPING_FEE_SEK = 49;
 
+/**
+ * Klassbeställningar med hemleverans: frakt per overall (stora paket är dyra
+ * att skicka), men aldrig lägre än SHIPPING_FEE_SEK.
+ */
+export const CLASS_SHIPPING_PER_OVERALL_SEK = 25;
+
 /** Gymnasieskolor i Kungsbacka där man kan hämta sitt paket. Ändra listan här. */
 export const KUNGSBACKA_SCHOOLS = [
   'Aranäsgymnasiet',
@@ -35,9 +41,15 @@ export function isKungsbackaPostalCode(postalCode: string): boolean {
   return /^(434|439)\d{2}$/u.test(digits) || /^429[34]\d$/u.test(digits);
 }
 
-/** Fraktkostnaden för ett leveranssätt. */
-export function shippingFee(delivery: Delivery): number {
-  return delivery === 'hem' ? SHIPPING_FEE_SEK : 0;
+/** Fraktkostnaden för ett leveranssätt. För klassbeställningar räknas den per overall. */
+export function shippingFee(
+  delivery: Delivery,
+  kind: 'privat' | 'klass' = 'privat',
+  overalls = 0,
+): number {
+  if (delivery === 'skola') return 0;
+  if (kind === 'privat') return SHIPPING_FEE_SEK;
+  return Math.max(SHIPPING_FEE_SEK, CLASS_SHIPPING_PER_OVERALL_SEK * overalls);
 }
 
 /** "Hämtas på Aranäsgymnasiet", "Hemleverans" eller "Levereras till skolan" (klassbeställning). */

@@ -27,6 +27,8 @@ interface Options {
   postalInput: HTMLInputElement;
   /** Text under "Hemleverans". */
   homeText: string;
+  /** Pris som visas för hemleverans (standard: den fasta frakten). */
+  homePrice?: string;
   /**
    * Klassbeställning: fråga efter skolans namn även vid hemleverans (fritext),
    * eftersom ordern alltid hör till en skola.
@@ -50,6 +52,7 @@ export function deliveryChoice({
   container,
   postalInput,
   homeText,
+  homePrice = formatSek(SHIPPING_FEE_SEK),
   askSchoolForHome = false,
   onChange,
 }: Options): DeliveryChoice {
@@ -59,7 +62,7 @@ export function deliveryChoice({
     'Gratis för dig med adress i Kungsbacka.',
     'Gratis',
   );
-  const homeOption = option('hem', 'Hemleverans', homeText, formatSek(SHIPPING_FEE_SEK));
+  const homeOption = option('hem', 'Hemleverans', homeText, homePrice);
   const select = h(
     'select',
     { id: 'school', 'aria-describedby': 'school-error' },

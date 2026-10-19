@@ -260,7 +260,7 @@ $$;
 -- Gränsen 25 finns även i src/shared/classOrder.ts – ändra på båda ställena.
 --
 -- FRAKT: p.delivery = 'skola' (gratis, hämtas på skolan i p.school) eller 'hem'
--- (49 kr). Gäller både vanliga beställningar och klassbeställningar.
+-- (49 kr, klassbeställningar 25 kr per overall men minst 49 kr).
 -- Fraktpriset finns även i src/shared/delivery.ts – ändra på båda ställena.
 -- ---------------------------------------------------------------------
 create or replace function create_order(p jsonb) returns jsonb
@@ -285,7 +285,6 @@ begin
   if v_delivery not in ('skola', 'hem') then
     raise exception 'INVALID_DELIVERY';
   end if;
-  v_shipping := case when v_delivery = 'hem' then 49 else 0 end;
 
   if jsonb_array_length(coalesce(p -> 'items', '[]'::jsonb)) = 0 then
     raise exception 'EMPTY_CART';
@@ -295,6 +294,13 @@ begin
     from jsonb_array_elements(p -> 'items') e
    where e ->> 'productId' = 'studentoverall';
   v_bulk := v_kind = 'klass' and v_overalls >= 25;
+  -- Frakt: skolhämtning gratis. Hemleverans 49 kr, för klassbeställningar
+  -- 25 kr per overall (minst 49 kr).
+  v_shipping := case
+    when v_delivery = 'skola' then 0
+    when v_kind = 'klass' then greatest(49, 25 * v_overalls)
+    else 49
+  end;
 
   insert into order_counters as c (year, last_number) values (v_year, 1)
   on conflict (year) do update set last_number = c.last_number + 1

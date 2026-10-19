@@ -385,7 +385,7 @@ Alla ordrar märks med sin källa. Ordrar via sajten får `webb` och ordrar via 
 Kunden väljer leverans i kassan:
 
 - **Hämta på en skola i Kungsbacka (gratis).** Valet blir klickbart när kunden skriver ett postnummer i Kungsbacka kommun (434 xx, 439 xx, 429 3x–4x). Då visas en lista med gymnasieskolorna, och kunden klickar i sin skola. Skolan syns i admin (blå etikett under adressen) och i CSV-kolumnen Leverans. Listan ändras i `src/shared/delivery.ts`.
-- **Hemleverans (49 kr).** Fraktpriset står på två ställen som måste ändras tillsammans: `SHIPPING_FEE_SEK` i `src/shared/delivery.ts` och `create_order` i `supabase/schema.sql` (det riktiga priset).
+- **Hemleverans (49 kr, klassbeställningar 25 kr per overall men minst 49 kr).** Fraktpriserna står på två ställen som måste ändras tillsammans: `SHIPPING_FEE_SEK` i `src/shared/delivery.ts` och `create_order` i `supabase/schema.sql` (det riktiga priset).
 
 Kunden fyller i sin adress i kassan. Produkterna köps in från olika leverantörer, så ni samlar ihop varorna och packar och skickar varje order själva. Använd CSV-exporten i adminpanelen som packlista. Sätt ordern till **Skickad** i admin när paketet lämnats in, så får kunden mejlet "På väg".
 
