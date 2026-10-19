@@ -380,9 +380,9 @@ Alla ordrar märks med sin källa. Ordrar via sajten får `webb` och ordrar via 
 - Klassbeställningar märks **Klassbeställning** i adminpanelen. Välj "Klassbeställningar" under **Typ / källa** för att se bara dem.
 - Kontrollera att lagret räcker innan stora klasser beställer. Om en storlek inte räcker skapas ingen order, och klassrepresentanten får veta vilken vara det gäller.
 
-## 13c. Leverans via Tingstad
+## 13c. Leverans
 
-Kunden fyller bara i sin adress. Ni lägger beställningen hos Tingstad med kundens namn och adress som leveransadress, och Tingstad skickar paketet direkt. Fraktbolaget väljer ombud och meddelar kunden. Tingstad har inget API (kontrollerat 2026-10-18), så beställningen hos dem görs för hand. Använd CSV-exporten i adminpanelen som underlag.
+Kunden fyller i sin adress i kassan. Produkterna köps in från olika leverantörer, så ni samlar ihop varorna och packar och skickar varje order själva. Använd CSV-exporten i adminpanelen som packlista. Sätt ordern till **Skickad** i admin när paketet lämnats in, så får kunden mejlet "På väg".
 
 ## 14. Adminpanelen
 

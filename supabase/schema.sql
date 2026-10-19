@@ -132,7 +132,7 @@ alter table orders add column if not exists kind text not null default 'privat'
   check (kind in ('privat', 'klass'));
 alter table orders add column if not exists school text;
 
--- Kunden väljer inte längre postombud (Tingstad skickar direkt). Ta bort den gamla kolumnen.
+-- Kunden väljer inte postombud längre. Ta bort den gamla kolumnen om den finns.
 alter table orders drop column if exists pickup_point;
 
 -- Klassbeställningar kan ha många av samma vara (t.ex. 30 overaller i M).
