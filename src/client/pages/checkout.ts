@@ -1,5 +1,12 @@
 /** Kassan (/kassa/): varukorgen och beställningsformuläret. */
 import { CreateOrderResponseSchema, type Product } from '../../shared/apiTypes.ts';
+import {
+  type Delivery,
+  isKungsbackaPostalCode,
+  KUNGSBACKA_SCHOOLS,
+  SHIPPING_FEE_SEK,
+  shippingFee,
+} from '../../shared/delivery.ts';
 import { formatSek } from '../../shared/format.ts';
 import { type CartLine, MAX_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
 import { ApiError, apiPost } from '../api.ts';
@@ -17,6 +24,8 @@ const FIELDS = [
   'street',
   'postalCode',
   'city',
+  'delivery',
+  'school',
   'phone',
   'comment',
   'acceptTerms',
@@ -31,6 +40,8 @@ const FIELD_LABELS: Record<Field, string> = {
   street: 'Gatuadress',
   postalCode: 'Postnummer',
   city: 'Ort',
+  delivery: 'Leverans',
+  school: 'Skola',
   phone: 'Mobilnummer',
   comment: 'Kommentar',
   acceptTerms: 'Godkännande',
@@ -43,6 +54,11 @@ const summary = byId('summary', HTMLDivElement);
 const errorBox = byId('form-errors', HTMLDivElement);
 const submitButton = byId('submit', HTMLButtonElement);
 const loading = byId('checkout-loading', HTMLParagraphElement);
+const postalInput = byId('postalCode', HTMLInputElement);
+const schoolPicker = byId('school-picker', HTMLDivElement);
+const schoolRows = byId('school-rows', HTMLTableSectionElement);
+const schoolHint = byId('delivery-school-hint', HTMLSpanElement);
+const shippingPrice = byId('shipping-price', HTMLSpanElement);
 
 let products: Product[] = [];
 let submitting = false;
@@ -132,14 +148,27 @@ function renderCart(): void {
   cartEmpty.hidden = !empty;
   form.hidden = empty;
   cartList.replaceChildren(...lines.map(cartLine));
+  const delivery = selectedDelivery();
+  const shipping = delivery === null ? 0 : shippingFee(delivery);
   summary.replaceChildren(
+    h('p', { class: 'order-line' }, h('span', {}, 'Varor'), h('span', {}, formatSek(cartTotal()))),
+    h(
+      'p',
+      { class: 'order-line' },
+      h('span', {}, 'Frakt'),
+      h(
+        'span',
+        {},
+        delivery === null ? 'Välj leverans' : shipping === 0 ? 'Gratis' : formatSek(shipping),
+      ),
+    ),
     h(
       'p',
       { class: 'order-total' },
       h('span', {}, 'Att betala'),
-      h('span', {}, formatSek(cartTotal())),
+      h('span', {}, formatSek(cartTotal() + shipping)),
     ),
-    h('p', { class: 'muted small' }, 'Priset är inklusive moms. Frakt ingår.'),
+    h('p', { class: 'muted small' }, 'Priset är inklusive moms.'),
   );
   if (touched.has('items')) validateLive();
 }
@@ -158,6 +187,8 @@ function formValues(): Record<string, unknown> {
     street: text('street'),
     postalCode: text('postalCode'),
     city: text('city'),
+    delivery: text('delivery'),
+    school: text('school'),
     phone: text('phone'),
     comment: text('comment'),
     acceptTerms: data.get('acceptTerms') === 'on',
@@ -258,6 +289,58 @@ async function submit(): Promise<void> {
   }
 }
 
+function deliveryInput(value: Delivery): HTMLInputElement {
+  const input = form.querySelector<HTMLInputElement>(`input[name="delivery"][value="${value}"]`);
+  if (input === null) throw new Error(`Saknar leveransval ${value}`);
+  return input;
+}
+
+function selectedDelivery(): Delivery | null {
+  const value = form.querySelector<HTMLInputElement>('input[name="delivery"]:checked')?.value;
+  return value === 'skola' || value === 'hem' ? value : null;
+}
+
+/** En rad per gymnasieskola i Kungsbacka, som en radioknapp. */
+function renderSchools(): void {
+  schoolRows.replaceChildren(
+    ...KUNGSBACKA_SCHOOLS.map((school) =>
+      h(
+        'tr',
+        {},
+        h(
+          'td',
+          {},
+          h(
+            'label',
+            { class: 'school-option' },
+            h('input', { type: 'radio', name: 'school', value: school }),
+            h('span', {}, school),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Visar skolvalet när adressen ligger i Kungsbacka. Hämtning på skola (gratis)
+ * väljs automatiskt första gången, men kunden kan byta till hemleverans.
+ */
+function updateDelivery(): void {
+  const skola = deliveryInput('skola');
+  const hem = deliveryInput('hem');
+  const inKungsbacka = isKungsbackaPostalCode(postalInput.value);
+  const wasDisabled = skola.disabled;
+  skola.disabled = !inKungsbacka;
+  if (!inKungsbacka && skola.checked) hem.checked = true;
+  if (inKungsbacka && wasDisabled && !hem.checked) skola.checked = true;
+  schoolHint.textContent = inKungsbacka
+    ? 'Gratis – välj skola i listan nedan.'
+    : 'Fyll i ett postnummer i Kungsbacka för att välja skola.';
+  schoolPicker.hidden = !skola.checked;
+  renderCart();
+}
+
 function onFieldEvent(event: Event): void {
   const target = event.target;
   if (!(target instanceof HTMLElement)) return;
@@ -279,6 +362,14 @@ async function init(): Promise<void> {
   renderCart();
   onCartChange(renderCart);
 
+  renderSchools();
+  shippingPrice.textContent = formatSek(SHIPPING_FEE_SEK);
+  updateDelivery();
+  postalInput.addEventListener('input', updateDelivery);
+  form.addEventListener('change', (event) => {
+    if (event.target instanceof HTMLInputElement && event.target.name === 'delivery')
+      updateDelivery();
+  });
   form.addEventListener('focusout', onFieldEvent);
   form.addEventListener('change', onFieldEvent);
   form.addEventListener('submit', (event) => {

@@ -63,6 +63,9 @@ Gå igenom hela listan på den publicerade sajten (eller en deploy preview) **b�
 
 ## Kassan och validering
 
+- [ ] Postnummer utanför Kungsbacka: "Hämta på en skola" går inte att välja, och frakten 49 kr läggs till i totalen.
+- [ ] Postnummer 434 30: skolhämtning väljs, listan med gymnasieskolor visas och frakten blir Gratis. Utan vald skola visas "Välj vilken skola …".
+- [ ] Skolan och frakten syns i orderbekräftelsen, mejlet, admin och CSV:n, och Swish-beloppet är varor + frakt.
 - [ ] Att skicka ett tomt formulär ger svenska felmeddelanden vid varje fält och en sammanfattning högst upp.
 - [ ] Felaktig e-post (`test@`), postnummer med 4 siffror, namn utan efternamn och felaktigt mobilnummer ger tydliga fel.
 - [ ] Det går inte att beställa utan att kryssa i godkännandet av köpvillkoren.

@@ -132,6 +132,13 @@ alter table orders add column if not exists kind text not null default 'privat'
   check (kind in ('privat', 'klass'));
 alter table orders add column if not exists school text;
 
+-- Leverans: 'skola' = hämtas på en gymnasieskola i Kungsbacka (gratis, skolan står i
+-- kolumnen school), 'hem' = skickas till kundens adress (frakt i shipping_sek).
+alter table orders add column if not exists delivery text not null default 'hem'
+  check (delivery in ('skola', 'hem'));
+alter table orders add column if not exists shipping_sek integer not null default 0
+  check (shipping_sek >= 0);
+
 -- Kunden väljer inte postombud längre. Ta bort den gamla kolumnen om den finns.
 alter table orders drop column if exists pickup_point;
 
@@ -191,6 +198,8 @@ as $$
     'comment',      o.comment,
     'kind',         o.kind,
     'school',       o.school,
+    'delivery',     o.delivery,
+    'shippingSek',  o.shipping_sek,
     'items', coalesce((
       select jsonb_agg(jsonb_build_object(
         'productId',    i.product_id,
@@ -249,6 +258,10 @@ $$;
 -- KLASSPRIS: en klassbeställning med minst 25 studentoveraller får
 -- klasspris (products.bulk_price_sek) på alla varor som har ett sådant.
 -- Gränsen 25 finns även i src/shared/classOrder.ts – ändra på båda ställena.
+--
+-- FRAKT: p.delivery = 'skola' (gratis, hämtas på skolan i p.school) eller 'hem'
+-- (49 kr). Klassbeställningar levereras alltid till skolan utan frakt.
+-- Fraktpriset finns även i src/shared/delivery.ts – ändra på båda ställena.
 -- ---------------------------------------------------------------------
 create or replace function create_order(p jsonb) returns jsonb
 language plpgsql
@@ -266,7 +279,15 @@ declare
   v_kind     text := coalesce(nullif(p ->> 'kind', ''), 'privat');
   v_overalls integer;
   v_bulk     boolean;
+  v_delivery text := case when coalesce(p ->> 'kind', '') = 'klass' then 'skola'
+                          else coalesce(nullif(p ->> 'delivery', ''), 'hem') end;
+  v_shipping integer;
 begin
+  if v_delivery not in ('skola', 'hem') then
+    raise exception 'INVALID_DELIVERY';
+  end if;
+  v_shipping := case when v_delivery = 'hem' then 49 else 0 end;
+
   if jsonb_array_length(coalesce(p -> 'items', '[]'::jsonb)) = 0 then
     raise exception 'EMPTY_CART';
   end if;
@@ -282,7 +303,7 @@ begin
 
   insert into orders (
     order_number, public_token, name, email, school_class, street, postal_code, city,
-    phone, comment, total_sek, source, kind, school
+    phone, comment, total_sek, source, kind, school, delivery, shipping_sek
   ) values (
     format('SS-%s-%s', v_year, lpad(v_seq::text, greatest(4, length(v_seq::text)), '0')),
     p ->> 'publicToken',
@@ -297,7 +318,9 @@ begin
     0,
     coalesce(nullif(p ->> 'source', ''), 'webb'),
     v_kind,
-    nullif(p ->> 'school', '')
+    nullif(p ->> 'school', ''),
+    v_delivery,
+    v_shipping
   )
   returning * into v_order;
 
@@ -328,6 +351,7 @@ begin
     v_total := v_total + v_price * v_qty;
   end loop;
 
+  v_total := v_total + v_shipping;
   update orders set total_sek = v_total where id = v_order.id returning * into v_order;
 
   insert into order_events (order_id, from_status, to_status, actor)

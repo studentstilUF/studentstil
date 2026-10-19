@@ -11,6 +11,7 @@ import {
   formatSek,
   formatSwishNumber,
 } from '../../shared/format.ts';
+import { deliveryLabel, shippingLabel } from '../../shared/delivery.ts';
 import { type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
 import { apiGet, apiPost } from '../api.ts';
 import { byId, h, isMobileDevice, nodes } from '../dom.ts';
@@ -54,10 +55,12 @@ function details(order: PublicOrder): HTMLElement {
         : `${item.productName}, ${item.size} – ${formatSek(item.lineTotalSek)}`,
     ]),
     [
-      'Leverans till',
+      'Adress',
       `${order.name}, ${order.street}, ${formatPostalCode(order.postalCode)} ${order.city}`,
     ],
     ['E-post', order.email],
+    ['Leverans', deliveryLabel(order)],
+    ['Frakt', shippingLabel(order.shippingSek)],
     ['Att betala', formatSek(order.totalSek)],
   ];
   return h(

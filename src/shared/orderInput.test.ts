@@ -18,6 +18,7 @@ const valid = {
   acceptTerms: true,
   source: 'QR-Mässa',
   website: '',
+  delivery: 'hem',
 };
 
 describe('validateOrderInput', () => {
@@ -82,6 +83,20 @@ describe('validateOrderInput', () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.errors[field]).toMatch(message);
+  });
+
+  it('tillåter hämtning på skola bara i Kungsbacka', () => {
+    const outside = validateOrderInput({ ...valid, delivery: 'skola', school: 'Aranäsgymnasiet' });
+    expect(!outside.ok && outside.errors['delivery']).toMatch(/bara adresser i Kungsbacka/u);
+    const noSchool = validateOrderInput({ ...valid, delivery: 'skola', postalCode: '434 30' });
+    expect(!noSchool.ok && noSchool.errors['school']).toMatch(/Välj vilken skola/u);
+    const ok = validateOrderInput({
+      ...valid,
+      delivery: 'skola',
+      postalCode: '434 30',
+      school: 'Aranäsgymnasiet',
+    });
+    expect(ok.ok).toBe(true);
   });
 
   it('kräver att kryssrutan är ikryssad', () => {

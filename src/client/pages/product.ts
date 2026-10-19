@@ -173,7 +173,7 @@ function renderProduct(product: Product): void {
           'ul',
           { class: 'product-perks' },
           h('li', {}, 'Betala enkelt med Swish'),
-          h('li', {}, 'Frakt ingår'),
+          h('li', {}, 'Gratis hämtning på skolor i Kungsbacka'),
           h('li', {}, '14 dagars ångerrätt'),
         ),
         ...nodes(

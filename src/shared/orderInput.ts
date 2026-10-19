@@ -10,6 +10,7 @@
  */
 import * as v from 'valibot';
 
+import { DeliverySchema, isKungsbackaPostalCode, KUNGSBACKA_SCHOOLS } from './delivery.ts';
 import { normalizeSource } from './source.ts';
 
 /** Tar bort osynliga styrtecken och onödiga mellanslag. */
@@ -173,12 +174,41 @@ const commonFields = {
 };
 
 /** Vanlig beställning från varukorgen. */
-export const OrderInputSchema = v.object({
-  kind: v.optional(v.literal('privat'), 'privat'),
-  items: privateItems,
-  phone: optionalPhone,
-  ...commonFields,
-});
+export const OrderInputSchema = v.pipe(
+  v.object({
+    kind: v.optional(v.literal('privat'), 'privat'),
+    items: privateItems,
+    phone: optionalPhone,
+    /** Hämta på en skola i Kungsbacka (gratis) eller få paketet hemskickat (frakt). */
+    delivery: DeliverySchema,
+    /** Skolan där paketet hämtas (bara när delivery är "skola"). */
+    school: v.pipe(
+      v.optional(v.string(), ''),
+      v.transform((s: string) => cleanLine(s)),
+    ),
+    ...commonFields,
+  }),
+  v.forward(
+    v.partialCheck(
+      [['delivery'], ['postalCode']],
+      (input) => input.delivery !== 'skola' || isKungsbackaPostalCode(input.postalCode),
+      'Hämtning på skola gäller bara adresser i Kungsbacka. Välj hemleverans i stället.',
+    ),
+    ['delivery'],
+  ),
+  v.forward(
+    v.partialCheck(
+      [['delivery'], ['school']],
+      (input) =>
+        input.delivery !== 'skola' ||
+        (KUNGSBACKA_SCHOOLS as readonly string[]).includes(input.school),
+      'Välj vilken skola du vill hämta paketet på.',
+    ),
+    ['school'],
+  ),
+  // Skolan sparas bara när paketet ska hämtas där.
+  v.transform((input) => (input.delivery === 'skola' ? input : { ...input, school: '' })),
+);
 
 /** Klassbeställning från klassrepresentanten. */
 export const ClassOrderInputSchema = v.object({
@@ -217,7 +247,7 @@ export function validateOrderInput(input: unknown): ValidationResult {
   const base = typeof input === 'object' && input !== null ? input : {};
   const withDefaults = isClassOrder(base)
     ? { ...EMPTY_FORM, school: '', ...base }
-    : { ...EMPTY_FORM, ...base };
+    : { ...EMPTY_FORM, delivery: '', ...base };
   const result = isClassOrder(base)
     ? v.safeParse(ClassOrderInputSchema, withDefaults)
     : v.safeParse(OrderInputSchema, withDefaults);

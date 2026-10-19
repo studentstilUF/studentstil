@@ -5,6 +5,7 @@
  */
 import * as v from 'valibot';
 
+import { DeliverySchema } from './delivery.ts';
 import { ORDER_STATUSES } from './orderStatus.ts';
 
 export const StatusSchema = v.picklist(ORDER_STATUSES);
@@ -38,6 +39,9 @@ export const OrderSchema = v.object({
   /** "privat" = vanlig varukorg, "klass" = klassbeställning från klassrepresentanten. */
   kind: OrderKindSchema,
   school: v.nullable(v.string()),
+  /** "skola" = hämtas på skolan i school (gratis), "hem" = skickas hem. */
+  delivery: DeliverySchema,
+  shippingSek: v.number(),
   items: v.array(OrderItemSchema),
   totalSek: v.number(),
   source: v.string(),
@@ -96,6 +100,8 @@ export const PublicOrderSchema = v.object({
   city: v.string(),
   kind: OrderKindSchema,
   school: v.nullable(v.string()),
+  delivery: DeliverySchema,
+  shippingSek: v.number(),
   items: v.array(OrderItemSchema),
   totalSek: v.number(),
   paymentMode: PaymentModeSchema,

@@ -4,6 +4,7 @@
  * kunduppgifter kan synas när man är inloggad som demo.
  */
 import type { Order, OrderItem } from '../../src/shared/apiTypes.ts';
+import { KUNGSBACKA_SCHOOLS, SHIPPING_FEE_SEK } from '../../src/shared/delivery.ts';
 import type { OrderStatus } from '../../src/shared/orderStatus.ts';
 
 const FIRST_NAMES = [
@@ -107,6 +108,9 @@ export function demoOrders(count = 48): Order[] {
       start + i * 26 * 60 * 60 * 1000 + Math.floor(random() * 3_600_000),
     ).toISOString();
     const paid = status !== 'vantar_betalning' && status !== 'avbruten';
+    // Ungefär hälften hämtar på en skola i Kungsbacka (gratis), resten får det hemskickat.
+    const atSchool = random() < 0.5;
+    const shippingSek = atSchool ? 0 : SHIPPING_FEE_SEK;
     orders.push({
       orderNumber: `SS-2026-${String(i).padStart(4, '0')}`,
       createdAt,
@@ -118,14 +122,16 @@ export function demoOrders(count = 48): Order[] {
         .replace(/ö/gu, 'o')}@example.com`,
       schoolClass: pick(CLASSES, random),
       street: `Exempelgatan ${String(1 + Math.floor(random() * 80))}`,
-      postalCode: `1${String(Math.floor(random() * 9000) + 1000)}`,
-      city: pick(CITIES, random),
+      postalCode: atSchool ? '43430' : `1${String(Math.floor(random() * 9000) + 1000)}`,
+      city: atSchool ? 'Kungsbacka' : pick(CITIES, random),
       phone: random() < 0.5 ? null : `070000${String(Math.floor(random() * 9000) + 1000)}`,
       comment: random() < 0.15 ? 'Demo: detta är en påhittad kommentar.' : null,
       kind: 'privat',
-      school: null,
+      school: atSchool ? pick(KUNGSBACKA_SCHOOLS, random) : null,
+      delivery: atSchool ? 'skola' : 'hem',
+      shippingSek,
       items,
-      totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0),
+      totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0) + shippingSek,
       source: pick(SOURCES, random),
       paidAt: paid ? createdAt : null,
       shippedAt: status === 'skickad' || status === 'levererad' ? createdAt : null,
@@ -197,6 +203,8 @@ function demoClassOrder(
     comment: 'Demo: påhittad klassbeställning.',
     kind: 'klass',
     school: 'Exempelgymnasiet',
+    delivery: 'skola',
+    shippingSek: 0,
     items,
     totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0),
     source: 'webb',

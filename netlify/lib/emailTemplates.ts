@@ -1,5 +1,6 @@
 /** Texter för alla mejl. Ändra formuleringarna här. */
 import { itemCount, type Order } from '../../src/shared/apiTypes.ts';
+import { deliveryLabel, shippingLabel } from '../../src/shared/delivery.ts';
 import { formatPostalCode, formatSek, formatSwishNumber } from '../../src/shared/format.ts';
 import type { Email } from './email.ts';
 import { siteUrl } from './env.ts';
@@ -31,9 +32,11 @@ function summaryHtml(order: Order): string {
       `${String(item.quantity)} st`,
       `${item.productName}, ${item.size} – ${formatSek(item.lineTotalSek)}`,
     ]),
+    ['Leverans', deliveryLabel(order)],
+    ['Frakt', shippingLabel(order.shippingSek)],
     ['Att betala', formatSek(order.totalSek)],
     [
-      'Leveransadress',
+      'Adress',
       `${order.name}, ${order.street}, ${formatPostalCode(order.postalCode)} ${order.city}`,
     ],
   ];
@@ -53,8 +56,10 @@ function summaryText(order: Order): string {
       (item) =>
         `${String(item.quantity)} st ${item.productName}, ${item.size} – ${formatSek(item.lineTotalSek)}`,
     ),
+    `Leverans: ${deliveryLabel(order)}`,
+    `Frakt: ${shippingLabel(order.shippingSek)}`,
     `Att betala: ${formatSek(order.totalSek)}`,
-    `Leveransadress: ${order.name}, ${order.street}, ${formatPostalCode(order.postalCode)} ${order.city}`,
+    `Adress: ${order.name}, ${order.street}, ${formatPostalCode(order.postalCode)} ${order.city}`,
   ].join('\n');
 }
 

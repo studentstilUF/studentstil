@@ -1,4 +1,5 @@
 /** Orderlistan i adminpanelen: sök, filter, sortering, statusändring och CSV-export. */
+import { deliveryLabel } from '../../shared/delivery.ts';
 import type { Order, OrderItem } from '../../shared/apiTypes.ts';
 import { toCsv } from '../../shared/csv.ts';
 import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format.ts';
@@ -220,7 +221,16 @@ function row(order: Order): HTMLTableRowElement {
         ? null
         : h('div', { class: 'muted small comment' }, `”${order.comment}”`),
     ),
-    h('td', { class: 'address' }, address),
+    h(
+      'td',
+      { class: 'address' },
+      address,
+      h(
+        'div',
+        { class: order.delivery === 'skola' ? 'delivery-tag delivery-tag-school' : 'delivery-tag' },
+        deliveryLabel(order),
+      ),
+    ),
     h('td', {}, h('a', { href: `mailto:${order.email}` }, order.email)),
     h('td', { class: 'nowrap number' }, formatSek(order.totalSek)),
     h('td', { class: 'nowrap' }, sourceLabel(order.source)),
@@ -282,6 +292,8 @@ export function exportCsv(): void {
     'Gatuadress',
     'Postnummer',
     'Ort',
+    'Leverans',
+    'Frakt (kr)',
     'E-post',
     'Mobil',
     'Kommentar',
@@ -307,6 +319,8 @@ export function exportCsv(): void {
       o.street,
       formatPostalCode(o.postalCode),
       o.city,
+      deliveryLabel(o),
+      o.shippingSek,
       o.email,
       o.phone ?? '',
       o.comment ?? '',

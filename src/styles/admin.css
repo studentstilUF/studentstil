@@ -328,3 +328,19 @@ code {
   word-break: break-all;
   font-size: 0.85rem;
 }
+
+/* Leveranssätt under adressen: skolhämtning markeras så att den syns i packlistan. */
+.delivery-tag {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.delivery-tag-school {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #1f3f8a;
+  font-weight: 600;
+}

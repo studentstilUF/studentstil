@@ -48,6 +48,8 @@ export default handle(async (req) => {
     city: order.city,
     kind: order.kind,
     school: order.school,
+    delivery: order.delivery,
+    shippingSek: order.shippingSek,
     items: order.items,
     totalSek: order.totalSek,
     paymentMode: mode,
