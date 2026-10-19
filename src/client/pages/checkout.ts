@@ -142,7 +142,7 @@ function renderCart(): void {
   form.hidden = empty;
   cartList.replaceChildren(...lines.map(cartLine));
   const chosen = delivery?.selected() ?? null;
-  const shipping = chosen === null ? 0 : shippingFee(chosen);
+  const shipping = chosen === null ? 0 : shippingFee(chosen, 'privat', 0, cartTotal());
   summary.replaceChildren(
     h('p', { class: 'order-line' }, h('span', {}, 'Varor'), h('span', {}, formatSek(cartTotal()))),
     h(
