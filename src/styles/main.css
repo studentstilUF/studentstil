@@ -960,6 +960,10 @@ main:focus {
   font-weight: 550;
   cursor: pointer;
   transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  transition:
     border-color 0.15s ease,
     background-color 0.15s ease;
 }
@@ -982,14 +986,52 @@ main:focus {
   border-color: var(--text);
 }
 
+/* Vald storlek/färg: tunn svart ram och genomskinlig grå ton i stället för helsvart. */
 .variant-option:has(input:checked) {
   border-color: var(--text);
-  background: var(--text);
-  color: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--text);
+  background: rgb(0 0 0 / 0.06);
+  animation: option-pop 0.28s ease-out;
 }
 
-.variant-option:has(input:checked) small {
-  color: var(--bg);
+/* Färgpricken studsar till när färgen väljs. */
+.variant-option:has(input:checked) .swatch {
+  animation: swatch-pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.15),
+    0 0 0 2px var(--bg),
+    0 0 0 3px rgb(0 0 0 / 0.35);
+}
+
+@keyframes option-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes swatch-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.45);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .variant-option:has(input:checked),
+  .variant-option:has(input:checked) .swatch {
+    animation: none;
+  }
 }
 
 .variant-option:has(input:focus-visible) {
