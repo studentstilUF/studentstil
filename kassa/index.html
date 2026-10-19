@@ -105,12 +105,10 @@
               <p id="delivery-error" class="field-error" hidden></p>
             </fieldset>
             <div class="field school-picker" id="school-picker" hidden>
-              <span class="field-label" id="school">Välj skola</span>
-              <div class="table-wrap">
-                <table class="school-table" aria-labelledby="school">
-                  <tbody id="school-rows"></tbody>
-                </table>
-              </div>
+              <label for="school">Välj skola</label>
+              <select id="school" name="school" aria-describedby="school-error">
+                <option value="">Välj skola …</option>
+              </select>
               <p id="school-error" class="field-error" hidden></p>
             </div>
             <div class="field">

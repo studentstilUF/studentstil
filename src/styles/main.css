@@ -1952,27 +1952,6 @@ textarea:focus {
   animation: fade-in 0.25s ease-out;
 }
 
-.school-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.school-table td {
-  padding: 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.school-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 4px;
-  cursor: pointer;
-}
-
-.school-option:has(input:checked) {
-  font-weight: 600;
-}
 
 .order-line {
   display: flex;
