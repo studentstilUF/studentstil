@@ -1982,3 +1982,22 @@ textarea:focus {
   padding: 0;
   margin-bottom: 4px;
 }
+
+/* ---------- Instagram i sidfoten ---------- */
+
+.footer-social {
+  margin: 0;
+}
+
+.instagram-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.instagram-link:hover span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
