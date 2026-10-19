@@ -1810,3 +1810,34 @@ textarea:focus {
   height: 18px;
   margin: 0;
 }
+
+/* Guld: ett ljust skimmer sveper över pricken då och då, som glitter. */
+.swatch-glitter {
+  position: relative;
+  overflow: hidden;
+}
+
+.swatch-glitter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.85) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: glitter-sweep 2.8s ease-in-out infinite;
+}
+
+@keyframes glitter-sweep {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swatch-glitter::after {
+    animation: none;
+  }
+}
