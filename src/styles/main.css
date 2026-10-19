@@ -127,6 +127,11 @@ p {
   top: 12px;
 }
 
+/* Element med attributet hidden ska alltid vara dolda, även när en klass ger dem display. */
+[hidden] {
+  display: none !important;
+}
+
 /* ---------- Sidhuvud ---------- */
 
 .site-header {

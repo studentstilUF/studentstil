@@ -57,7 +57,7 @@ const loading = byId('checkout-loading', HTMLParagraphElement);
 const postalInput = byId('postalCode', HTMLInputElement);
 const schoolPicker = byId('school-picker', HTMLDivElement);
 const schoolSelect = byId('school', HTMLSelectElement);
-const schoolHint = byId('delivery-school-hint', HTMLSpanElement);
+const schoolOption = byId('delivery-school', HTMLLabelElement);
 const shippingPrice = byId('shipping-price', HTMLSpanElement);
 
 let products: Product[] = [];
@@ -314,11 +314,11 @@ function updateDelivery(): void {
   const hem = deliveryInput('hem');
   const inKungsbacka = isKungsbackaPostalCode(postalInput.value);
   skola.disabled = !inKungsbacka;
-  if (!inKungsbacka && skola.checked) hem.checked = true;
-  schoolHint.textContent = inKungsbacka
-    ? 'Hämta gratis på din gymnasieskola.'
-    : 'Fyll i ett postnummer i Kungsbacka för att välja skola.';
-  schoolPicker.hidden = !skola.checked;
+  // Skolhämtning syns bara för adresser i Kungsbacka. Ändras postnumret
+  // till en annan ort försvinner valet (och skollistan) igen.
+  schoolOption.hidden = !inKungsbacka;
+  if (!inKungsbacka && skola.checked) skola.checked = false;
+  schoolPicker.hidden = !(inKungsbacka && skola.checked);
   renderCart();
 }
 
