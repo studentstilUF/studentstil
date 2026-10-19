@@ -10,6 +10,8 @@ const COLORS: Readonly<Record<string, string>> = {
   Blå: '#1f5fd1',
   Röd: '#d62b2b',
   Svart: '#111111',
+  // Metallisk guld som en liten gradient.
+  Guld: 'linear-gradient(135deg, #f3dd8a, #c9a227 55%, #8f6f12)',
   Vit: '#ffffff',
 };
 

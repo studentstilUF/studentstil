@@ -38,7 +38,7 @@ const PRODUCTS = [
     id: 'sprayfarg',
     name: 'Sprayfärg',
     price: 79,
-    sizes: ['Gul', 'Grön', 'Orange', 'Rosa', 'Blå', 'Röd'],
+    sizes: ['Gul', 'Grön', 'Orange', 'Rosa', 'Blå', 'Röd', 'Svart', 'Guld'],
   },
   {
     id: 'spritpenna',

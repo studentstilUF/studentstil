@@ -51,6 +51,8 @@ insert into product_sizes (product_id, size, stock, sort_order) values
   ('sprayfarg', 'Rosa', 10, 4),
   ('sprayfarg', 'Blå', 10, 5),
   ('sprayfarg', 'Röd', 10, 6),
+  ('sprayfarg', 'Svart', 10, 7),
+  ('sprayfarg', 'Guld', 10, 8),
   ('spritpenna', '8 färger', 30, 1)
 -- Lagret ändras inte om raden redan finns, men ordningen uppdateras.
 on conflict (product_id, size) do update set sort_order = excluded.sort_order;
@@ -59,9 +61,9 @@ on conflict (product_id, size) do update set sort_order = excluded.sort_order;
 delete from product_sizes
  where product_id = 'spritpenna' and size <> '8 färger';
 
--- Sprayfärgen finns i gul, grön, orange, rosa, blå och röd. Ta bort andra färger.
+-- Sprayfärgen finns i gul, grön, orange, rosa, blå, röd, svart och guld. Ta bort andra färger.
 delete from product_sizes
- where product_id = 'sprayfarg' and size not in ('Gul', 'Grön', 'Orange', 'Rosa', 'Blå', 'Röd');
+ where product_id = 'sprayfarg' and size not in ('Gul', 'Grön', 'Orange', 'Rosa', 'Blå', 'Röd', 'Svart', 'Guld');
 
 -- Overallen säljs bara i XS–XL. Ta bort andra storlekar om de finns sedan tidigare.
 delete from product_sizes
