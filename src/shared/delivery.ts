@@ -46,8 +46,9 @@ export function deliveryLabel(order: {
   delivery: Delivery;
   school: string | null;
 }): string {
-  if (order.kind === 'klass') return `Levereras till ${order.school ?? 'skolan'}`;
-  return order.delivery === 'skola' ? `Hämtas på ${order.school ?? 'skolan'}` : 'Hemleverans';
+  if (order.delivery === 'hem') return 'Hemleverans';
+  const school = order.school ?? 'skolan';
+  return order.kind === 'klass' ? `Levereras till ${school}` : `Hämtas på ${school}`;
 }
 
 /** "Gratis" eller t.ex. "49 kr". */

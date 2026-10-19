@@ -260,7 +260,7 @@ $$;
 -- Gränsen 25 finns även i src/shared/classOrder.ts – ändra på båda ställena.
 --
 -- FRAKT: p.delivery = 'skola' (gratis, hämtas på skolan i p.school) eller 'hem'
--- (49 kr). Klassbeställningar levereras alltid till skolan utan frakt.
+-- (49 kr). Gäller både vanliga beställningar och klassbeställningar.
 -- Fraktpriset finns även i src/shared/delivery.ts – ändra på båda ställena.
 -- ---------------------------------------------------------------------
 create or replace function create_order(p jsonb) returns jsonb
@@ -279,8 +279,7 @@ declare
   v_kind     text := coalesce(nullif(p ->> 'kind', ''), 'privat');
   v_overalls integer;
   v_bulk     boolean;
-  v_delivery text := case when coalesce(p ->> 'kind', '') = 'klass' then 'skola'
-                          else coalesce(nullif(p ->> 'delivery', ''), 'hem') end;
+  v_delivery text := coalesce(nullif(p ->> 'delivery', ''), 'hem');
   v_shipping integer;
 begin
   if v_delivery not in ('skola', 'hem') then

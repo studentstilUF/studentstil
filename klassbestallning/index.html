@@ -64,11 +64,6 @@
               </div>
               <div class="field-row">
                 <div class="field">
-                  <label for="school">Skola</label>
-                  <input id="school" name="school" type="text" autocomplete="organization" maxlength="100" aria-describedby="school-error" required />
-                  <p id="school-error" class="field-error" hidden></p>
-                </div>
-                <div class="field">
                   <label for="schoolClass">Klass</label>
                   <input id="schoolClass" name="schoolClass" type="text" autocomplete="off" autocapitalize="characters" maxlength="20" placeholder="t.ex. TE3A" aria-describedby="schoolClass-error" required />
                   <p id="schoolClass-error" class="field-error" hidden></p>
@@ -77,8 +72,8 @@
             </fieldset>
 
             <fieldset>
-              <legend>3. Leveransadress</legend>
-              <p class="hint">Oftast skolans adress. Vi kan också lämna beställningen direkt på skolan – skriv det i kommentaren.</p>
+              <legend>3. Adress och leverans</legend>
+              <p class="hint">Med en adress i Kungsbacka kan ni hämta beställningen gratis på er gymnasieskola.</p>
               <div class="field">
                 <label for="street">Gatuadress</label>
                 <input id="street" name="street" type="text" autocomplete="street-address" maxlength="120" aria-describedby="street-error" required />
@@ -96,6 +91,7 @@
                   <p id="city-error" class="field-error" hidden></p>
                 </div>
               </div>
+              <div id="delivery-choice" class="delivery-block"></div>
               <div class="field">
                 <label for="comment">Övrig kommentar <span class="optional">(valfritt)</span></label>
                 <textarea id="comment" name="comment" maxlength="500" placeholder="T.ex. önskat leveransdatum eller att ni hämtar på skolan" aria-describedby="comment-error"></textarea>

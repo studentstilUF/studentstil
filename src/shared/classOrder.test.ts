@@ -48,6 +48,7 @@ describe('priceClassOrder', () => {
 describe('validateOrderInput för klassbeställning', () => {
   const valid = {
     kind: 'klass',
+    delivery: 'hem',
     items: [{ productId: 'studentoverall', size: 'M', quantity: 30 }],
     name: 'Kim Klassrepresentant',
     email: 'kerstin@example.com',

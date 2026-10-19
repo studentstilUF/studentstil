@@ -84,33 +84,7 @@
                 <p id="city-error" class="field-error" hidden></p>
               </div>
             </div>
-            <fieldset class="field delivery-choice" id="delivery" aria-describedby="delivery-error">
-              <legend class="field-label">Leverans</legend>
-              <label class="delivery-option" id="delivery-school" hidden>
-                <input type="radio" name="delivery" value="skola" disabled />
-                <span>
-                  <strong>Hämta på en skola i Kungsbacka</strong>
-                  <span class="muted small">Gratis för dig med adress i Kungsbacka.</span>
-                </span>
-                <span class="delivery-price">Gratis</span>
-              </label>
-              <label class="delivery-option">
-                <input type="radio" name="delivery" value="hem" />
-                <span>
-                  <strong>Hemleverans</strong>
-                  <span class="muted small">Vi skickar paketet till adressen ovan.</span>
-                </span>
-                <span class="delivery-price" id="shipping-price">49 kr</span>
-              </label>
-              <p id="delivery-error" class="field-error" hidden></p>
-            </fieldset>
-            <div class="field school-picker" id="school-picker" hidden>
-              <label for="school">Välj skola</label>
-              <select id="school" name="school" aria-describedby="school-error">
-                <option value="">Välj skola …</option>
-              </select>
-              <p id="school-error" class="field-error" hidden></p>
-            </div>
+            <div id="delivery-choice" class="delivery-block"></div>
             <div class="field">
               <label for="comment">Övrig kommentar <span class="optional">(valfritt)</span></label>
               <textarea id="comment" name="comment" maxlength="500" aria-describedby="comment-error"></textarea>

@@ -9,10 +9,12 @@ import {
   OVERALL_PRODUCT_ID,
   priceClassOrder,
 } from '../../shared/classOrder.ts';
+import { shippingFee } from '../../shared/delivery.ts';
 import { formatSek } from '../../shared/format.ts';
 import { MAX_CLASS_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
 import { ApiError, apiPost } from '../api.ts';
 import { colorSwatch } from '../colorSwatch.ts';
+import { type DeliveryChoice, deliveryChoice } from '../deliveryChoice.ts';
 import { byId, h, nodes } from '../dom.ts';
 import { fetchProducts, hasVariantChoice } from '../products.ts';
 import { currentSource } from '../source.ts';
@@ -22,11 +24,12 @@ const FIELDS = [
   'name',
   'email',
   'phone',
-  'school',
   'schoolClass',
   'street',
   'postalCode',
   'city',
+  'delivery',
+  'school',
   'comment',
   'acceptTerms',
 ] as const;
@@ -42,6 +45,7 @@ const FIELD_LABELS: Record<Field, string> = {
   street: 'Gatuadress',
   postalCode: 'Postnummer',
   city: 'Ort',
+  delivery: 'Leverans',
   comment: 'Kommentar',
   acceptTerms: 'Godkännande',
 };
@@ -53,6 +57,9 @@ const totals = byId('class-totals', HTMLDivElement);
 const errorBox = byId('form-errors', HTMLDivElement);
 const submitButton = byId('submit', HTMLButtonElement);
 const loading = byId('class-loading', HTMLParagraphElement);
+const postalInput = byId('postalCode', HTMLInputElement);
+const deliveryContainer = byId('delivery-choice', HTMLDivElement);
+let delivery: DeliveryChoice | null = null;
 
 let products: Product[] = [];
 /** Ett sifferfält per produkt och storlek/färg. */
@@ -177,6 +184,10 @@ function renderSummary(): void {
     h('div', { class: 'progress', role: 'presentation' }, bar),
   );
 
+  const chosen = delivery?.selected() ?? null;
+  const shipping = chosen === null || price.lines.length === 0 ? 0 : shippingFee(chosen);
+  const shippingText =
+    chosen === null ? 'Välj leverans' : shipping === 0 ? 'Gratis' : formatSek(shipping);
   totals.replaceChildren(
     ...nodes(
       price.lines.length === 0
@@ -201,17 +212,14 @@ function renderSummary(): void {
             h('s', {}, formatSek(price.fullPriceSek)),
           )
         : null,
+      h('p', { class: 'order-line' }, h('span', {}, 'Frakt'), h('span', {}, shippingText)),
       h(
         'p',
         { class: 'order-total' },
         h('span', {}, 'Att betala'),
-        h('span', {}, formatSek(price.totalSek)),
+        h('span', {}, formatSek(price.totalSek + shipping)),
       ),
-      h(
-        'p',
-        { class: 'muted small' },
-        'Priserna är inklusive moms. Leveransen till skolan är gratis.',
-      ),
+      h('p', { class: 'muted small' }, 'Priserna är inklusive moms.'),
     ),
   );
 }
@@ -233,7 +241,8 @@ function formValues(): Record<string, unknown> {
     name: text('name'),
     email: text('email'),
     phone: text('phone'),
-    school: text('school'),
+    school: delivery?.school() ?? '',
+    delivery: delivery?.selected() ?? '',
     schoolClass: text('schoolClass'),
     street: text('street'),
     postalCode: text('postalCode'),
@@ -320,6 +329,13 @@ async function init(): Promise<void> {
     return;
   }
   productsRoot.replaceChildren(...products.map(productSection));
+  delivery = deliveryChoice({
+    container: deliveryContainer,
+    postalInput,
+    homeText: 'Vi skickar beställningen till adressen ovan.',
+    askSchoolForHome: true,
+    onChange: update,
+  });
   renderSummary();
   loading.hidden = true;
   form.hidden = false;
