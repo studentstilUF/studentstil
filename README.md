@@ -393,7 +393,7 @@ Alla ordrar märks med sin källa. Ordrar via sajten får `webb` och ordrar via 
 
 - De **3 första vanliga beställningarna** som innehåller en overall får **en overall gratis** (en per order). Rabatten dras av automatiskt och syns som "Kampanjrabatt".
 - De **3 första klassbeställningarna** får **ett flak Celsius**. Det syns som en gul etikett "Flak Celsius" i admin och på packsedeln, så glöm inte att packa med det.
-- Avbrutna ordrar räknas inte, så platsen går vidare till nästa kund. Räkningen sker i  i , och texten på startsidan står i . Ta bort rutan där när kampanjen är slut.
+- Avbrutna ordrar räknas inte, så platsen går vidare till nästa kund. Räkningen sker i `create_order` i `supabase/schema.sql`, och texten på startsidan står i `index.html`. Ta bort rutan där när kampanjen är slut.
 
 ## 13c. Leverans
 
