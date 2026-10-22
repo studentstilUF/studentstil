@@ -86,7 +86,38 @@ function sizeGuideSection(guide: SizeGuide): HTMLElement {
   );
 }
 
+/**
+ * Produktdata som Google kan läsa (schema.org/Product), så att pris och lager
+ * kan visas direkt i sökresultatet.
+ */
+function addStructuredData(product: Product): void {
+  const absolute = (path: string): string => new URL(path, window.location.origin).href;
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: product.images.map(absolute),
+    sku: product.id,
+    brand: { '@type': 'Brand', name: 'Studentstil' },
+    offers: {
+      '@type': 'Offer',
+      url: window.location.href,
+      price: product.priceSek,
+      priceCurrency: 'SEK',
+      availability: product.sizes.some((s) => s.available)
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: { '@type': 'Organization', name: 'Studentstil UF' },
+    },
+  };
+  const script = h('script', { type: 'application/ld+json' });
+  script.textContent = JSON.stringify(data);
+  document.head.append(script);
+}
+
 function renderProduct(product: Product): void {
+  addStructuredData(product);
   document.title = `${product.name} – Studentstil`;
   breadcrumb.textContent = product.name;
   setMetaDescription(product.description);

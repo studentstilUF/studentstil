@@ -10,6 +10,7 @@ const PAGES = [
   'bestall/index.html',
   'produkt/index.html',
   'klassbestallning/index.html',
+  'paket/index.html',
   'kassa/index.html',
   'order/index.html',
   'vanliga-fragor/index.html',

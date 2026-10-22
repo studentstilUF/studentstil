@@ -85,6 +85,16 @@ function packingSlip(order: Order): HTMLElement {
           h('td', { colspan: 3 }, 'Frakt'),
           h('td', { class: 'number' }, shippingLabel(order.shippingSek)),
         ),
+        ...(order.bundleDiscountSek > 0
+          ? [
+              h(
+                'tr',
+                {},
+                h('td', { colspan: 3 }, 'Paketrabatt 5 %'),
+                h('td', { class: 'number' }, `−${formatSek(order.bundleDiscountSek)}`),
+              ),
+            ]
+          : []),
         ...(order.discountSek > 0
           ? [
               h(

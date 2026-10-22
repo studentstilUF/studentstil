@@ -40,6 +40,7 @@ function order(overrides: Partial<Order>): Order {
     delivery: 'hem',
     shippingSek: 0,
     discountSek: 0,
+    bundleDiscountSek: 0,
     campaign: null,
     trackingNumber: null,
     source: 'webb',

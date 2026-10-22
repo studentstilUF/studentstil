@@ -148,6 +148,10 @@ alter table orders add column if not exists discount_sek integer not null defaul
 -- PostNords kollinummer för hemleveranser, så att kunden kan spåra paketet.
 alter table orders add column if not exists tracking_number text
   check (tracking_number ~ '^[A-Za-z0-9]{6,40}$');
+-- Studentpaketet: 5 % rabatt per komplett paket (1 overall + 2 sprayfärger +
+-- 1 spritpennor) i vanliga beställningar. Dras av från totalen.
+alter table orders add column if not exists bundle_discount_sek integer not null default 0
+  check (bundle_discount_sek >= 0);
 alter table orders add column if not exists campaign text
   check (campaign in ('gratis-overall', 'flak-celsius'));
 
@@ -213,6 +217,7 @@ as $$
     'delivery',     o.delivery,
     'shippingSek',  o.shipping_sek,
     'discountSek',  o.discount_sek,
+    'bundleDiscountSek', o.bundle_discount_sek,
     'campaign',     o.campaign,
     'trackingNumber', o.tracking_number,
     'items', coalesce((
@@ -299,6 +304,8 @@ declare
   v_campaign_used integer;
   v_discount integer := 0;
   v_campaign text;
+  v_bundles  integer := 0;
+  v_bundle_discount integer := 0;
 begin
   if v_delivery not in ('skola', 'hem') then
     raise exception 'INVALID_DELIVERY';
@@ -399,9 +406,27 @@ begin
   end if;
 
   -- Kunden betalar fullt pris. discount_sek = det ni swishar tillbaka efteråt.
-  v_total := v_total + v_shipping;
+  -- STUDENTPAKETET: 5 % på varje komplett paket (1 overall + 2 sprayfärger +
+  -- 1 spritpennor). Bara vanliga beställningar – klasser har klasspris.
+  -- Samma regel finns i src/shared/bundle.ts.
+  if v_kind = 'privat' then
+    select least(
+             coalesce(sum(quantity) filter (where product_id = 'studentoverall'), 0),
+             coalesce(sum(quantity) filter (where product_id = 'sprayfarg'), 0) / 2,
+             coalesce(sum(quantity) filter (where product_id = 'spritpenna'), 0))
+      into v_bundles
+      from order_items where order_id = v_order.id;
+    if v_bundles > 0 then
+      select round(v_bundles * sum(case id when 'sprayfarg' then 2 else 1 end * price_sek) * 5 / 100.0)::integer
+        into v_bundle_discount
+        from products where id in ('studentoverall', 'sprayfarg', 'spritpenna');
+    end if;
+  end if;
+
+  v_total := v_total - v_bundle_discount + v_shipping;
   update orders set total_sek = v_total, shipping_sek = v_shipping,
-                    discount_sek = v_discount, campaign = v_campaign
+                    discount_sek = v_discount, campaign = v_campaign,
+                    bundle_discount_sek = v_bundle_discount
    where id = v_order.id returning * into v_order;
 
   insert into order_events (order_id, from_status, to_status, actor)

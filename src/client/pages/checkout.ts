@@ -1,5 +1,6 @@
 /** Kassan (/kassa/): varukorgen och beställningsformuläret. */
 import { CreateOrderResponseSchema, type Product } from '../../shared/apiTypes.ts';
+import { bundleDiscount } from '../../shared/bundle.ts';
 import { shippingFee } from '../../shared/delivery.ts';
 import { formatSek } from '../../shared/format.ts';
 import { type CartLine, MAX_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
@@ -143,6 +144,7 @@ function renderCart(): void {
   cartList.replaceChildren(...lines.map(cartLine));
   const chosen = delivery?.selected() ?? null;
   const shipping = chosen === null ? 0 : shippingFee(chosen);
+  const bundle = bundleDiscount(getCart(), products);
   summary.replaceChildren(
     ...nodes(
       h(
@@ -151,6 +153,14 @@ function renderCart(): void {
         h('span', {}, 'Varor'),
         h('span', {}, formatSek(cartTotal())),
       ),
+      bundle > 0
+        ? h(
+            'p',
+            { class: 'order-line bundle-line' },
+            h('span', {}, 'Studentpaketet −5 %'),
+            h('span', {}, `−${formatSek(bundle)}`),
+          )
+        : null,
       h(
         'p',
         { class: 'order-line' },
@@ -165,7 +175,7 @@ function renderCart(): void {
         'p',
         { class: 'order-total' },
         h('span', {}, 'Att betala'),
-        h('span', {}, formatSek(cartTotal() + shipping)),
+        h('span', {}, formatSek(cartTotal() - bundle + shipping)),
       ),
       h(
         'p',

@@ -134,6 +134,7 @@ export function demoOrders(count = 48): Order[] {
       delivery: atSchool ? 'skola' : 'hem',
       shippingSek,
       discountSek,
+      bundleDiscountSek: 0,
       campaign: discountSek > 0 ? 'gratis-overall' : null,
       trackingNumber:
         !atSchool && (status === 'skickad' || status === 'levererad')
@@ -215,6 +216,7 @@ function demoClassOrder(
     delivery: 'skola',
     shippingSek: 0,
     discountSek: 0,
+    bundleDiscountSek: 0,
     // Den första klassbeställningen i demon fick kampanjen.
     campaign: number % 2 === 1 ? 'flak-celsius' : null,
     trackingNumber: null,

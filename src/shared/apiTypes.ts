@@ -45,6 +45,8 @@ export const OrderSchema = v.object({
   shippingSek: v.number(),
   /** Kampanj: belopp som swishas tillbaka i efterhand (gratis overall), och vilken kampanj. */
   discountSek: v.number(),
+  /** Studentpaketet: rabatt som redan är avdragen från totalen. */
+  bundleDiscountSek: v.number(),
   campaign: v.nullable(CampaignSchema),
   /** PostNords kollinummer (hemleverans), eller null. */
   trackingNumber: v.nullable(v.string()),
@@ -110,6 +112,8 @@ export const PublicOrderSchema = v.object({
   shippingSek: v.number(),
   /** Kampanj: belopp som swishas tillbaka i efterhand (gratis overall), och vilken kampanj. */
   discountSek: v.number(),
+  /** Studentpaketet: rabatt som redan är avdragen från totalen. */
+  bundleDiscountSek: v.number(),
   campaign: v.nullable(CampaignSchema),
   /** PostNords kollinummer (hemleverans), eller null. */
   trackingNumber: v.nullable(v.string()),

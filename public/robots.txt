@@ -3,3 +3,5 @@ Disallow: /admin/
 Disallow: /kassa/
 Disallow: /order/
 Disallow: /api/
+
+Sitemap: https://studentstil.se/sitemap.xml

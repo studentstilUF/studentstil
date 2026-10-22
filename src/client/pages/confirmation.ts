@@ -73,6 +73,9 @@ function details(order: PublicOrder): HTMLElement {
     ['E-post', order.email],
     ['Leverans', deliveryLabel(order)],
     ['Frakt', shippingLabel(order.shippingSek)],
+    ...(order.bundleDiscountSek > 0
+      ? [['Paketrabatt 5 %', `−${formatSek(order.bundleDiscountSek)}`] as [string, string]]
+      : []),
     ...(order.discountSek > 0
       ? [['Återbetalning', formatSek(order.discountSek)] as [string, string]]
       : []),
