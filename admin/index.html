@@ -71,7 +71,10 @@
             </div>
             <div class="toolbar">
               <p id="order-count" class="muted small" aria-live="polite"></p>
-              <button id="export-csv" class="button button-small" type="button">Exportera CSV (Excel)</button>
+              <div class="toolbar-actions">
+                <button id="print-orders" class="button button-small" type="button">Skriv ut ordrar</button>
+                <button id="export-csv" class="button button-small button-secondary" type="button">Exportera CSV (Excel)</button>
+              </div>
             </div>
             <div class="table-scroll">
               <table id="orders-table" class="data-table orders-table">

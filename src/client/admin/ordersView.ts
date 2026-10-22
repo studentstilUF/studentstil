@@ -6,6 +6,7 @@ import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format
 import { ORDER_STATUSES, type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
 import { sourceChannel } from '../../shared/source.ts';
 import { byId, downloadBlob, h } from '../dom.ts';
+import { printOrders } from './printOrders.ts';
 
 type SortKey =
   | 'orderNumber'
@@ -357,4 +358,7 @@ export function initOrdersView(handler: StatusChangeHandler): void {
     });
   }
   byId('export-csv', HTMLButtonElement).addEventListener('click', exportCsv);
+  byId('print-orders', HTMLButtonElement).addEventListener('click', () => {
+    printOrders(visibleOrders());
+  });
 }

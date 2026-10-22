@@ -344,3 +344,133 @@ code {
   color: #1f3f8a;
   font-weight: 600;
 }
+
+/* ---------- Utskrift av ordrar (packsedlar) ---------- */
+
+.toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Packsedlarna syns bara på papper, aldrig på skärmen. */
+#print-view {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  body > *:not(#print-view) {
+    display: none !important;
+  }
+
+  #print-view {
+    display: block;
+    font-size: 11pt;
+    color: #000;
+  }
+
+  .print-meta {
+    margin: 0 0 8mm;
+    font-size: 9pt;
+    color: #555;
+  }
+
+  .print-order {
+    break-inside: avoid;
+    border: 1.5px solid #000;
+    border-radius: 6px;
+    padding: 6mm;
+    margin-bottom: 6mm;
+  }
+
+  .print-order-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #000;
+    padding-bottom: 2mm;
+    margin-bottom: 3mm;
+  }
+
+  .print-order-head h2 {
+    margin: 0;
+    font-size: 18pt;
+  }
+
+  .print-status {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 9pt;
+    border: 1px solid #000;
+    border-radius: 99px;
+    padding: 1mm 3mm;
+  }
+
+  .print-delivery {
+    margin: 0 0 3mm;
+    font-size: 13pt;
+    font-weight: 700;
+  }
+
+  .print-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1mm 8mm;
+    margin: 0 0 4mm;
+  }
+
+  .print-row {
+    display: flex;
+    gap: 3mm;
+  }
+
+  .print-row dt {
+    min-width: 18mm;
+    color: #555;
+  }
+
+  .print-row dd {
+    margin: 0;
+  }
+
+  .print-items {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .print-items th,
+  .print-items td {
+    text-align: left;
+    padding: 1.5mm 2mm;
+    border-bottom: 1px solid #bbb;
+  }
+
+  .print-items .number {
+    text-align: right;
+  }
+
+  td.print-check,
+  th.print-check {
+    width: 14mm;
+    text-align: center !important;
+  }
+
+  td.print-check {
+    font-size: 14pt;
+  }
+
+  .print-total td {
+    font-weight: 700;
+    border-bottom: 0;
+  }
+
+  .print-comment {
+    margin: 3mm 0 0;
+    font-style: italic;
+  }
+}
