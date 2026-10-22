@@ -170,7 +170,7 @@ function renderProduct(product: Product): void {
           ? h(
               'a',
               { class: 'campaign-pill', href: '/#kampanj' },
-              'Kampanj: gratis för de 3 första beställningarna',
+              'Kampanj: gratis för de 5 första beställningarna',
             )
           : null,
         h('p', { class: 'product-description' }, product.description),

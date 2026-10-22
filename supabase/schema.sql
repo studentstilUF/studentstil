@@ -139,8 +139,8 @@ alter table orders add column if not exists delivery text not null default 'hem'
 alter table orders add column if not exists shipping_sek integer not null default 0
   check (shipping_sek >= 0);
 
--- Kampanj: de 3 första vanliga beställningarna får en overall gratis
--- ('gratis-overall', rabatten i discount_sek) och de 3 första
+-- Kampanj: de 5 första vanliga beställningarna får en overall gratis
+-- ('gratis-overall', rabatten i discount_sek) och de 5 första
 -- klassbeställningarna får ett flak Celsius ('flak-celsius'). Se create_order.
 alter table orders add column if not exists discount_sek integer not null default 0
   check (discount_sek >= 0);
@@ -369,14 +369,14 @@ begin
     v_total := v_total + v_price * v_qty;
   end loop;
 
-  -- KAMPANJ: de 3 första beställningarna av varje sort. Avbrutna ordrar
+  -- KAMPANJ: de 5 första beställningarna av varje sort. Avbrutna ordrar
   -- räknas inte, så platsen går vidare till nästa kund. Låset gör att två
   -- samtidiga beställningar inte kan ta samma plats.
   perform pg_advisory_xact_lock(hashtext('studentstil-kampanj'));
   select count(*) into v_campaign_used
     from orders
    where kind = v_kind and campaign is not null and status <> 'avbruten';
-  if v_campaign_used < 3 then
+  if v_campaign_used < 5 then
     if v_kind = 'klass' then
       v_campaign := 'flak-celsius';
     elsif v_overalls > 0 then

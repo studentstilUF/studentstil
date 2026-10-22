@@ -220,7 +220,7 @@ function renderSummary(): void {
         'p',
         { class: 'campaign-hint' },
         h('strong', {}, 'Kampanj: '),
-        'är ni en av de 3 första klasserna som beställer får ni ett flak Celsius på köpet.',
+        'är ni en av de 5 första klasserna som beställer får ni ett flak Celsius på köpet.',
       ),
     ),
   );

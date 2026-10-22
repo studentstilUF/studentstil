@@ -111,9 +111,9 @@ export function demoOrders(count = 48): Order[] {
     // Ungefär hälften hämtar på en skola i Kungsbacka (gratis), resten får det hemskickat.
     const atSchool = random() < 0.5;
     const shippingSek = atSchool ? 0 : SHIPPING_FEE_SEK;
-    // Kampanj: de 3 första beställningarna med en overall fick en overall gratis.
+    // Kampanj: de 5 första beställningarna med en overall fick en overall gratis.
     const overall = items.find((item) => item.productId === 'studentoverall');
-    const discountSek = i <= 3 && overall !== undefined ? overall.unitPriceSek : 0;
+    const discountSek = i <= 5 && overall !== undefined ? overall.unitPriceSek : 0;
     orders.push({
       orderNumber: `SS-2026-${String(i).padStart(4, '0')}`,
       createdAt,

@@ -167,7 +167,7 @@ function renderCart(): void {
           'p',
           { class: 'campaign-hint' },
           h('strong', {}, 'Kampanj: '),
-          'är du en av de 3 första som beställer dras en overall av automatiskt. Det syns på orderbekräftelsen.',
+          'är du en av de 5 första som beställer dras en overall av automatiskt. Det syns på orderbekräftelsen.',
         )
       : null,
   );
