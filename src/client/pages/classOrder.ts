@@ -107,6 +107,11 @@ function quantityRow(product: Product, size: string): HTMLElement {
     change(1);
   });
   input.addEventListener('input', update);
+  // Visa det antal som faktiskt räknas (t.ex. 999 blir 500 och -5 blir 0).
+  input.addEventListener('change', () => {
+    input.value = String(parseQuantity(input));
+    update();
+  });
   input.addEventListener('focus', () => {
     input.select();
   });
