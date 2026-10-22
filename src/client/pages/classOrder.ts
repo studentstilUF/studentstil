@@ -216,6 +216,12 @@ function renderSummary(): void {
         h('span', {}, formatSek(price.totalSek + shipping)),
       ),
       h('p', { class: 'muted small' }, 'Priserna är inklusive moms.'),
+      h(
+        'p',
+        { class: 'campaign-hint' },
+        h('strong', {}, 'Kampanj: '),
+        'är ni en av de 3 första klasserna som beställer får ni ett flak Celsius på köpet.',
+      ),
     ),
   );
 }

@@ -2011,29 +2011,136 @@ textarea:focus {
 /* ---------- Kampanjruta på startsidan ---------- */
 
 .promo {
-  margin-top: 24px;
-  padding: 16px 20px;
-  border: 2px solid var(--text);
-  border-radius: var(--radius);
-  max-width: 34em;
-  background: #fff8e6;
+  margin-top: 28px;
+  max-width: 40em;
 }
 
-.promo-title {
-  margin: 0 0 6px;
-  font-weight: 800;
+.promo-eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.85rem;
 }
 
-.promo ul {
-  margin: 0;
-  padding-left: 1.1em;
+.promo-grid {
   display: grid;
-  gap: 4px;
+  gap: 10px;
+}
+
+@media (min-width: 560px) {
+  .promo-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.promo-card {
+  display: grid;
+  gap: 6px;
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  background: var(--text);
+  color: var(--bg);
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.promo-card:hover {
+  transform: translateY(-2px);
+}
+
+.promo-big {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.promo-small {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.promo-note {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .campaign-notice {
   font-weight: 600;
+}
+
+/* ---------- Löpande kampanjrad längst upp ---------- */
+
+.announcement {
+  display: block;
+  overflow: hidden;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/* Texten finns två gånger efter varandra, så att den kan glida i en oändlig slinga. */
+.announcement-track {
+  display: flex;
+  width: max-content;
+  animation: announcement-scroll 40s linear infinite;
+}
+
+.announcement:hover .announcement-track {
+  animation-play-state: paused;
+}
+
+.announcement-track span {
+  padding: 8px 0;
+  white-space: nowrap;
+}
+
+.announcement-track span::after {
+  content: '★';
+  margin: 0 28px;
+  opacity: 0.6;
+}
+
+@keyframes announcement-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-track {
+    animation: none;
+  }
+}
+
+/* Kampanjen på produktsidan och i kassan */
+.campaign-pill {
+  display: inline-block;
+  justify-self: start;
+  width: fit-content;
+  margin: 4px 0 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.campaign-hint {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border: 1.5px solid var(--text);
+  border-radius: var(--radius-small);
+  font-size: 0.9rem;
 }

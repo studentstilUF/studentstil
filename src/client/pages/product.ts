@@ -166,6 +166,13 @@ function renderProduct(product: Product): void {
         { class: 'product-summary' },
         h('h1', {}, product.name),
         h('p', { class: 'product-price' }, formatSek(product.priceSek)),
+        product.id === 'studentoverall'
+          ? h(
+              'a',
+              { class: 'campaign-pill', href: '/#kampanj' },
+              'Kampanj: gratis för de 3 första beställningarna',
+            )
+          : null,
         h('p', { class: 'product-description' }, product.description),
         inStock ? form : h('p', { class: 'notice' }, 'Slut i lager just nu. Kom tillbaka snart!'),
         h(

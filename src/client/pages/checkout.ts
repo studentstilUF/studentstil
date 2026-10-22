@@ -162,6 +162,14 @@ function renderCart(): void {
       h('span', {}, formatSek(cartTotal() + shipping)),
     ),
     h('p', { class: 'muted small' }, 'Priset är inklusive moms.'),
+    getCart().some((line) => line.productId === 'studentoverall')
+      ? h(
+          'p',
+          { class: 'campaign-hint' },
+          h('strong', {}, 'Kampanj: '),
+          'är du en av de 3 första som beställer dras en overall av automatiskt. Det syns på orderbekräftelsen.',
+        )
+      : null,
   );
   if (touched.has('items')) validateLive();
 }
