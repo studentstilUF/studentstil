@@ -393,7 +393,7 @@ Alla ordrar märks med sin källa. Ordrar via sajten får `webb` och ordrar via 
 
 - De **5 första vanliga beställningarna** som innehåller en overall får **en återbetalning för en overall** (en per order). Alla betalar fullt pris. Ordern märks "Återbetala en overall" i admin med beloppet, och ni gör återbetalningen när betalningen är registrerad.
 - De **5 första klassbeställningarna** får **ett flak Celsius**. Det syns som en gul etikett "Flak Celsius" i admin och på packsedeln, så glöm inte att packa med det.
-- Avbrutna ordrar räknas inte, så platsen går vidare till nästa kund. Räkningen sker i `create_order` i `supabase/schema.sql`, och texten på startsidan står i `index.html`. Ta bort rutan där när kampanjen är slut.
+- Samma e-postadress kan bara få kampanjen en gång. Obetalda ordrar avbryts automatiskt efter 7 dagar (dailyMaintenance), och avbrutna ordrar räknas inte, så platsen går vidare till nästa kund. Räkningen sker i `create_order` i `supabase/schema.sql`, och texten på startsidan står i `index.html`. Ta bort rutan där när kampanjen är slut.
 
 ## 13c. Leverans
 

@@ -377,7 +377,11 @@ begin
   select count(*) into v_campaign_used
     from orders
    where kind = v_kind and campaign is not null and status <> 'avbruten';
-  if v_campaign_used < 5 then
+  -- Samma e-postadress kan bara få kampanjen en gång.
+  if v_campaign_used < 5 and not exists (
+    select 1 from orders
+     where lower(email) = lower(p ->> 'email') and campaign is not null and status <> 'avbruten'
+  ) then
     if v_kind = 'klass' then
       v_campaign := 'flak-celsius';
     elsif v_overalls > 0 then
@@ -570,6 +574,31 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------
+-- Avbryter obetalda ordrar som är äldre än p_days dagar (köpvillkoren: 7 dagar).
+-- Varorna läggs tillbaka i lager och en eventuell kampanjplats blir ledig.
+-- Körs varje natt av dailyMaintenance.
+-- ---------------------------------------------------------------------
+create or replace function cancel_unpaid_orders(p_days integer) returns integer
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_number text;
+  v_count  integer := 0;
+begin
+  for v_number in
+    select order_number from orders
+     where status = 'vantar_betalning'
+       and created_at < now() - make_interval(days => p_days)
+  loop
+    perform set_order_status(v_number, 'avbruten', 'system');
+    v_count := v_count + 1;
+  end loop;
+  return v_count;
+end;
+$$;
+
+-- ---------------------------------------------------------------------
 -- Behörigheter: bara service role (våra Netlify Functions) får anropa funktionerna.
 -- ---------------------------------------------------------------------
 revoke execute on function
@@ -582,7 +611,8 @@ revoke execute on function
   set_swish_payment_id(text, text),
   mark_paid_by_swish(text, numeric, text),
   rate_limit_hit(text, integer, integer),
-  anonymize_old_orders(integer)
+  anonymize_old_orders(integer),
+  cancel_unpaid_orders(integer)
 from public, anon, authenticated;
 
 grant execute on function
@@ -595,5 +625,6 @@ grant execute on function
   set_swish_payment_id(text, text),
   mark_paid_by_swish(text, numeric, text),
   rate_limit_hit(text, integer, integer),
-  anonymize_old_orders(integer)
+  anonymize_old_orders(integer),
+  cancel_unpaid_orders(integer)
 to service_role;

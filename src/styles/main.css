@@ -2113,3 +2113,9 @@ textarea:focus {
   border-radius: var(--radius-small);
   font-size: 0.9rem;
 }
+
+/* Långa e-postadresser och länkar får brytas på smala skärmar. */
+.prose a,
+.site-footer a {
+  overflow-wrap: anywhere;
+}
