@@ -167,7 +167,7 @@ function renderCart(): void {
         h('span', {}, 'Att betala'),
         h('span', {}, formatSek(cartTotal() + shipping)),
       ),
-      h('p', { class: 'muted small' }, 'Priset är inklusive moms.'),
+      h('p', { class: 'muted small' }, 'Moms tillkommer inte – Studentstil UF är inte momsregistrerat.'),
       getCart().some((line) => line.productId === 'studentoverall')
         ? h(
             'p',
