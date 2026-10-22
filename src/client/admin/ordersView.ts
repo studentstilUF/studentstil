@@ -1,6 +1,7 @@
 import type { Order, OrderItem } from '../../shared/apiTypes.ts';
-import { toCsv } from '../../shared/csv.ts';
 /** Orderlistan i adminpanelen: sök, filter, sortering, statusändring och CSV-export. */
+import { campaignShortLabel } from '../../shared/campaign.ts';
+import { toCsv } from '../../shared/csv.ts';
 import { deliveryLabel } from '../../shared/delivery.ts';
 import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format.ts';
 import { ORDER_STATUSES, type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
@@ -231,6 +232,9 @@ function row(order: Order): HTMLTableRowElement {
         { class: order.delivery === 'skola' ? 'delivery-tag delivery-tag-school' : 'delivery-tag' },
         deliveryLabel(order),
       ),
+      order.campaign === null
+        ? null
+        : h('div', { class: 'campaign-tag' }, campaignShortLabel(order.campaign)),
     ),
     h('td', {}, h('a', { href: `mailto:${order.email}` }, order.email)),
     h('td', { class: 'nowrap number' }, formatSek(order.totalSek)),
@@ -295,6 +299,8 @@ export function exportCsv(): void {
     'Ort',
     'Leverans',
     'Frakt (kr)',
+    'Rabatt (kr)',
+    'Kampanj',
     'E-post',
     'Mobil',
     'Kommentar',
@@ -322,6 +328,8 @@ export function exportCsv(): void {
       o.city,
       deliveryLabel(o),
       o.shippingSek,
+      o.discountSek,
+      o.campaign === null ? '' : campaignShortLabel(o.campaign),
       o.email,
       o.phone ?? '',
       o.comment ?? '',

@@ -2007,3 +2007,33 @@ textarea:focus {
   font-size: 0.95rem;
 }
 
+
+/* ---------- Kampanjruta på startsidan ---------- */
+
+.promo {
+  margin-top: 24px;
+  padding: 16px 20px;
+  border: 2px solid var(--text);
+  border-radius: var(--radius);
+  max-width: 34em;
+  background: #fff8e6;
+}
+
+.promo-title {
+  margin: 0 0 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+}
+
+.promo ul {
+  margin: 0;
+  padding-left: 1.1em;
+  display: grid;
+  gap: 4px;
+}
+
+.campaign-notice {
+  font-weight: 600;
+}

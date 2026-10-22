@@ -39,6 +39,8 @@ function order(overrides: Partial<Order>): Order {
     school: null,
     delivery: 'hem',
     shippingSek: 0,
+    discountSek: 0,
+    campaign: null,
     source: 'webb',
     paidAt: null,
     shippedAt: null,

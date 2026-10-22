@@ -139,6 +139,14 @@ alter table orders add column if not exists delivery text not null default 'hem'
 alter table orders add column if not exists shipping_sek integer not null default 0
   check (shipping_sek >= 0);
 
+-- Kampanj: de 3 första vanliga beställningarna får en overall gratis
+-- ('gratis-overall', rabatten i discount_sek) och de 3 första
+-- klassbeställningarna får ett flak Celsius ('flak-celsius'). Se create_order.
+alter table orders add column if not exists discount_sek integer not null default 0
+  check (discount_sek >= 0);
+alter table orders add column if not exists campaign text
+  check (campaign in ('gratis-overall', 'flak-celsius'));
+
 -- Kunden väljer inte postombud längre. Ta bort den gamla kolumnen om den finns.
 alter table orders drop column if exists pickup_point;
 
@@ -200,6 +208,8 @@ as $$
     'school',       o.school,
     'delivery',     o.delivery,
     'shippingSek',  o.shipping_sek,
+    'discountSek',  o.discount_sek,
+    'campaign',     o.campaign,
     'items', coalesce((
       select jsonb_agg(jsonb_build_object(
         'productId',    i.product_id,
@@ -281,6 +291,9 @@ declare
   v_bulk     boolean;
   v_delivery text := coalesce(nullif(p ->> 'delivery', ''), 'hem');
   v_shipping integer;
+  v_campaign_used integer;
+  v_discount integer := 0;
+  v_campaign text;
 begin
   if v_delivery not in ('skola', 'hem') then
     raise exception 'INVALID_DELIVERY';
@@ -356,8 +369,29 @@ begin
     v_total := v_total + v_price * v_qty;
   end loop;
 
-  v_total := v_total + v_shipping;
-  update orders set total_sek = v_total, shipping_sek = v_shipping where id = v_order.id returning * into v_order;
+  -- KAMPANJ: de 3 första beställningarna av varje sort. Avbrutna ordrar
+  -- räknas inte, så platsen går vidare till nästa kund. Låset gör att två
+  -- samtidiga beställningar inte kan ta samma plats.
+  perform pg_advisory_xact_lock(hashtext('studentstil-kampanj'));
+  select count(*) into v_campaign_used
+    from orders
+   where kind = v_kind and campaign is not null and status <> 'avbruten';
+  if v_campaign_used < 3 then
+    if v_kind = 'klass' then
+      v_campaign := 'flak-celsius';
+    elsif v_overalls > 0 then
+      -- En overall gratis (bara en, även om ordern har flera).
+      v_campaign := 'gratis-overall';
+      select min(unit_price_sek) into v_discount
+        from order_items
+       where order_id = v_order.id and product_id = 'studentoverall';
+    end if;
+  end if;
+
+  v_total := v_total - v_discount + v_shipping;
+  update orders set total_sek = v_total, shipping_sek = v_shipping,
+                    discount_sek = v_discount, campaign = v_campaign
+   where id = v_order.id returning * into v_order;
 
   insert into order_events (order_id, from_status, to_status, actor)
   values (v_order.id, null, v_order.status, 'kund');

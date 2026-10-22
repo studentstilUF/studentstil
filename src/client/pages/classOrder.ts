@@ -158,11 +158,7 @@ function productSection(product: Product): HTMLElement {
     ),
     sizes.length === 0
       ? h('p', { class: 'muted small' }, 'Slut i lager just nu.')
-      : h(
-          'div',
-          { class: 'qty-grid' },
-          ...sizes.map((s) => quantityRow(product, s.size)),
-        ),
+      : h('div', { class: 'qty-grid' }, ...sizes.map((s) => quantityRow(product, s.size))),
   );
 }
 

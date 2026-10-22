@@ -50,6 +50,8 @@ export default handle(async (req) => {
     school: order.school,
     delivery: order.delivery,
     shippingSek: order.shippingSek,
+    discountSek: order.discountSek,
+    campaign: order.campaign,
     items: order.items,
     totalSek: order.totalSek,
     paymentMode: mode,

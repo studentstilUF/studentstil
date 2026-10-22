@@ -14,14 +14,14 @@ import {
 import { formatSek } from '../shared/format.ts';
 import { h } from './dom.ts';
 
-export interface DeliveryChoice {
+export type DeliveryChoice = {
   /** Valt leveranssätt, eller null om kunden inte valt än. */
   selected: () => Delivery | null;
   /** Skolan: vald i rullistan vid skolhämtning, annars fritext (klassbeställning) eller ''. */
   school: () => string;
-}
+};
 
-interface Options {
+type Options = {
   /** Platsen i formuläret där valet ska ritas upp. */
   container: HTMLElement;
   postalInput: HTMLInputElement;
@@ -36,7 +36,7 @@ interface Options {
   askSchoolForHome?: boolean;
   /** Anropas när leveransen eller skolan ändras (t.ex. för att räkna om totalen). */
   onChange: () => void;
-}
+};
 
 function option(value: Delivery, title: string, text: string, price: string): HTMLLabelElement {
   return h(
@@ -46,6 +46,12 @@ function option(value: Delivery, title: string, text: string, price: string): HT
     h('span', {}, h('strong', {}, title), h('span', { class: 'muted small' }, text)),
     h('span', { class: 'delivery-price' }, price),
   );
+}
+
+function radioIn(label: HTMLLabelElement): HTMLInputElement {
+  const input = label.querySelector('input');
+  if (input === null) throw new Error('Leveransvalet saknar radioknapp.');
+  return input;
 }
 
 export function deliveryChoice({
@@ -102,9 +108,8 @@ export function deliveryChoice({
     h('p', { id: 'school-error', class: 'field-error', hidden: true }),
   );
 
-  const schoolRadio = schoolOption.querySelector('input');
-  const homeRadio = homeOption.querySelector('input');
-  if (schoolRadio === null || homeRadio === null) throw new Error('Leveransvalet saknar radioknapp.');
+  const schoolRadio = radioIn(schoolOption);
+  const homeRadio = radioIn(homeOption);
 
   function update(): void {
     const inKungsbacka = isKungsbackaPostalCode(postalInput.value);
@@ -129,7 +134,9 @@ export function deliveryChoice({
 
   return {
     selected: () => {
-      const value = container.querySelector<HTMLInputElement>('input[name="delivery"]:checked')?.value;
+      const value = container.querySelector<HTMLInputElement>(
+        'input[name="delivery"]:checked',
+      )?.value;
       return value === 'skola' || value === 'hem' ? value : null;
     },
     school: () => (schoolRadio.checked ? select.value : schoolText.value),

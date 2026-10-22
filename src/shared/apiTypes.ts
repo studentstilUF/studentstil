@@ -5,6 +5,7 @@
  */
 import * as v from 'valibot';
 
+import { CampaignSchema } from './campaign.ts';
 import { DeliverySchema } from './delivery.ts';
 import { ORDER_STATUSES } from './orderStatus.ts';
 
@@ -42,6 +43,9 @@ export const OrderSchema = v.object({
   /** "skola" = hämtas på skolan i school (gratis), "hem" = skickas hem. */
   delivery: DeliverySchema,
   shippingSek: v.number(),
+  /** Kampanjrabatt (gratis overall) i kronor, och vilken kampanj ordern fick. */
+  discountSek: v.number(),
+  campaign: v.nullable(CampaignSchema),
   items: v.array(OrderItemSchema),
   totalSek: v.number(),
   source: v.string(),
@@ -102,6 +106,9 @@ export const PublicOrderSchema = v.object({
   school: v.nullable(v.string()),
   delivery: DeliverySchema,
   shippingSek: v.number(),
+  /** Kampanjrabatt (gratis overall) i kronor, och vilken kampanj ordern fick. */
+  discountSek: v.number(),
+  campaign: v.nullable(CampaignSchema),
   items: v.array(OrderItemSchema),
   totalSek: v.number(),
   paymentMode: PaymentModeSchema,

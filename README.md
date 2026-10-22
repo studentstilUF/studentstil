@@ -389,6 +389,12 @@ Alla ordrar märks med sin källa. Ordrar via sajten får `webb` och ordrar via 
 - Klassbeställningar märks **Klassbeställning** i adminpanelen. Välj "Klassbeställningar" under **Typ / källa** för att se bara dem.
 - Kontrollera att lagret räcker innan stora klasser beställer. Om en storlek inte räcker skapas ingen order, och klassrepresentanten får veta vilken vara det gäller.
 
+## 13d. Kampanj för de första kunderna
+
+- De **3 första vanliga beställningarna** som innehåller en overall får **en overall gratis** (en per order). Rabatten dras av automatiskt och syns som "Kampanjrabatt".
+- De **3 första klassbeställningarna** får **ett flak Celsius**. Det syns som en gul etikett "Flak Celsius" i admin och på packsedeln, så glöm inte att packa med det.
+- Avbrutna ordrar räknas inte, så platsen går vidare till nästa kund. Räkningen sker i  i , och texten på startsidan står i . Ta bort rutan där när kampanjen är slut.
+
 ## 13c. Leverans
 
 Kunden väljer leverans i kassan:

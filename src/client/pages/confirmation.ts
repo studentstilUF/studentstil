@@ -5,6 +5,7 @@ import {
   type SwishStart,
   SwishStartSchema,
 } from '../../shared/apiTypes.ts';
+import { campaignLabel } from '../../shared/campaign.ts';
 import { deliveryLabel, shippingLabel } from '../../shared/delivery.ts';
 import {
   formatDateTime,
@@ -61,6 +62,9 @@ function details(order: PublicOrder): HTMLElement {
     ['E-post', order.email],
     ['Leverans', deliveryLabel(order)],
     ['Frakt', shippingLabel(order.shippingSek)],
+    ...(order.discountSek > 0
+      ? [['Kampanjrabatt', `−${formatSek(order.discountSek)}`] as [string, string]]
+      : []),
     ['Att betala', formatSek(order.totalSek)],
   ];
   return h(
@@ -360,6 +364,9 @@ function render(order: PublicOrder): void {
         ),
       ),
       h('p', { 'aria-live': 'polite' }, STATUS_TEXT[order.status]),
+      order.campaign === null
+        ? null
+        : h('p', { class: 'notice notice-ok campaign-notice' }, campaignLabel(order.campaign)),
       order.status === 'vantar_betalning' ? paymentSection(order) : null,
       tracker(order),
       h(

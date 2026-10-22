@@ -4,6 +4,7 @@
  * (t.ex. status "Betald" eller en viss skola) och tryck sedan "Skriv ut".
  */
 import type { Order } from '../../shared/apiTypes.ts';
+import { campaignShortLabel } from '../../shared/campaign.ts';
 import { deliveryLabel, shippingLabel } from '../../shared/delivery.ts';
 import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format.ts';
 import { STATUS_LABELS } from '../../shared/orderStatus.ts';
@@ -30,6 +31,9 @@ function packingSlip(order: Order): HTMLElement {
       deliveryLabel(order),
       isClass ? ` · Klassbeställning ${order.schoolClass}` : '',
     ),
+    order.campaign === null
+      ? null
+      : h('p', { class: 'print-campaign' }, `KAMPANJ: ${campaignShortLabel(order.campaign)}`),
     h(
       'dl',
       { class: 'print-details' },
@@ -37,10 +41,7 @@ function packingSlip(order: Order): HTMLElement {
         row('Namn', order.name),
         isClass ? null : row('Klass', order.schoolClass),
         order.delivery === 'hem'
-          ? row(
-              'Adress',
-              `${order.street}, ${formatPostalCode(order.postalCode)} ${order.city}`,
-            )
+          ? row('Adress', `${order.street}, ${formatPostalCode(order.postalCode)} ${order.city}`)
           : null,
         row('Telefon', order.phone ?? '–'),
         row('E-post', order.email),
@@ -85,6 +86,16 @@ function packingSlip(order: Order): HTMLElement {
           h('td', { colspan: 3 }, 'Frakt'),
           h('td', { class: 'number' }, shippingLabel(order.shippingSek)),
         ),
+        ...(order.discountSek > 0
+          ? [
+              h(
+                'tr',
+                {},
+                h('td', { colspan: 3 }, 'Kampanjrabatt'),
+                h('td', { class: 'number' }, `−${formatSek(order.discountSek)}`),
+              ),
+            ]
+          : []),
         h(
           'tr',
           { class: 'print-total' },
@@ -93,7 +104,9 @@ function packingSlip(order: Order): HTMLElement {
         ),
       ),
     ),
-    order.comment === null ? null : h('p', { class: 'print-comment' }, `Kommentar: ${order.comment}`),
+    order.comment === null
+      ? null
+      : h('p', { class: 'print-comment' }, `Kommentar: ${order.comment}`),
   );
 }
 
@@ -115,6 +128,12 @@ export function printOrders(orders: readonly Order[]): void {
     ...orders.map(packingSlip),
   );
   document.body.append(view);
-  window.addEventListener('afterprint', () => view.remove(), { once: true });
+  window.addEventListener(
+    'afterprint',
+    () => {
+      view.remove();
+    },
+    { once: true },
+  );
   window.print();
 }

@@ -474,3 +474,24 @@ code {
     font-style: italic;
   }
 }
+
+/* Kampanj (gratis overall / flak Celsius) syns tydligt i listan och på packsedeln. */
+.campaign-tag {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff1d6;
+  color: #7a4b00;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+@media print {
+  .print-campaign {
+    margin: 0 0 3mm;
+    padding: 2mm 3mm;
+    border: 2px dashed #000;
+    font-weight: 800;
+  }
+}
