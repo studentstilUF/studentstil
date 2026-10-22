@@ -25,7 +25,7 @@ const returnedFromSwish = params.has('swish');
 
 const STATUS_TEXT: Record<OrderStatus, string> = {
   vantar_betalning:
-    'Varorna är reserverade åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi kontrollerar inkomna Swish-betalningar löpande, och den här sidan uppdateras automatiskt när betalningen är registrerad. Du får även en bekräftelse via e-post.',
+    'Varorna är reserverade åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi stämmer av inkomna Swish-betalningar manuellt, oftast inom ett dygn, och den här sidan uppdateras automatiskt när betalningen är registrerad. Du får även en bekräftelse via e-post.',
   betald: 'Tack! Vi har tagit emot din betalning och börjar packa din beställning.',
   packad: 'Din beställning är packad och skickas inom kort.',
   skickad: 'Din beställning är skickad. Grattis till studenten!',

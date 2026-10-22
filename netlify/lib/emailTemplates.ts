@@ -87,7 +87,7 @@ export function orderConfirmationEmail(
       : `Har du inte betalat än? Swisha ${formatSek(order.totalSek)} till ${formatSwishNumber(manual.payee)} och skriv ${order.orderNumber} som meddelande. Har du redan betalat behöver du inte göra något – vi mejlar dig när betalningen är registrerad.`;
 
   const intro =
-    'Vi har tagit emot din beställning och reserverat varorna åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi kontrollerar inkomna Swish-betalningar löpande och meddelar dig via e-post så snart betalningen är registrerad.';
+    'Vi har tagit emot din beställning och reserverat varorna åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi stämmer av inkomna Swish-betalningar manuellt, oftast inom ett dygn, och meddelar dig via e-post så snart betalningen är registrerad.';
   const trackInfo =
     'Under "Följ din order" ser du hela tiden om vi har registrerat din betalning och när ordern packas och skickas. Sidan uppdateras automatiskt.';
 

@@ -323,7 +323,16 @@ Mejl som skickas:
 
 All Swish-kod finns i `netlify/lib/swish/`. Resten av koden pratar bara med `swishProvider()`, så **byte av läge = byt miljövariabeln `SWISH_MODE`**.
 
-### Läge A – Swish Företag (start)
+### Läge A – Swish Företag (det här kör Studentstil)
+
+> **Beslut 2026-10-22:** banken erbjuder inte Swish Handel till Studentstil, så sajten kör läge A med manuell avstämning. Koden för läge B ligger kvar men används inte så länge `SWISH_MODE` inte är `commerce`.
+
+**Daglig avstämning (5 min):**
+1. Öppna Swish Företag-appen och gå igenom dagens inbetalningar.
+2. I adminpanelen: filtrera på **Väntar på betalning**.
+3. För varje inbetalning: hitta ordern med samma ordernummer (Swish-meddelandet) och kontrollera att beloppet stämmer.
+4. Sätt ordern till **Betald**. Kunden får mejlet "Tack för din beställning" och sidan Följ din order uppdateras.
+5. Har någon betalat fel belopp eller glömt ordernumret: kontakta kunden innan ni markerar ordern.
 
 `SWISH_MODE=manual`. Kräver bara ett Swish Företag-nummer från er bank. Många banker har paket för UF-företag.
 
