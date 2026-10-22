@@ -7,7 +7,7 @@ import { ApiError, apiPost } from '../api.ts';
 import { clearCart, getCart, onCartChange, removeFromCart, setQuantity } from '../cart.ts';
 import { colorSwatch } from '../colorSwatch.ts';
 import { type DeliveryChoice, deliveryChoice } from '../deliveryChoice.ts';
-import { byId, h } from '../dom.ts';
+import { byId, h, nodes } from '../dom.ts';
 import { fetchProducts, hasVariantChoice } from '../products.ts';
 import { currentSource } from '../source.ts';
 
@@ -144,32 +144,39 @@ function renderCart(): void {
   const chosen = delivery?.selected() ?? null;
   const shipping = chosen === null ? 0 : shippingFee(chosen);
   summary.replaceChildren(
-    h('p', { class: 'order-line' }, h('span', {}, 'Varor'), h('span', {}, formatSek(cartTotal()))),
-    h(
-      'p',
-      { class: 'order-line' },
-      h('span', {}, 'Frakt'),
+    ...nodes(
       h(
-        'span',
-        {},
-        chosen === null ? 'Välj leverans' : shipping === 0 ? 'Gratis' : formatSek(shipping),
+        'p',
+        { class: 'order-line' },
+        h('span', {}, 'Varor'),
+        h('span', {}, formatSek(cartTotal())),
       ),
+      h(
+        'p',
+        { class: 'order-line' },
+        h('span', {}, 'Frakt'),
+        h(
+          'span',
+          {},
+          chosen === null ? 'Välj leverans' : shipping === 0 ? 'Gratis' : formatSek(shipping),
+        ),
+      ),
+      h(
+        'p',
+        { class: 'order-total' },
+        h('span', {}, 'Att betala'),
+        h('span', {}, formatSek(cartTotal() + shipping)),
+      ),
+      h('p', { class: 'muted small' }, 'Priset är inklusive moms.'),
+      getCart().some((line) => line.productId === 'studentoverall')
+        ? h(
+            'p',
+            { class: 'campaign-hint' },
+            h('strong', {}, 'Kampanj: '),
+            'är du en av de 5 första som beställer dras en overall av automatiskt. Det syns på orderbekräftelsen.',
+          )
+        : null,
     ),
-    h(
-      'p',
-      { class: 'order-total' },
-      h('span', {}, 'Att betala'),
-      h('span', {}, formatSek(cartTotal() + shipping)),
-    ),
-    h('p', { class: 'muted small' }, 'Priset är inklusive moms.'),
-    getCart().some((line) => line.productId === 'studentoverall')
-      ? h(
-          'p',
-          { class: 'campaign-hint' },
-          h('strong', {}, 'Kampanj: '),
-          'är du en av de 5 första som beställer dras en overall av automatiskt. Det syns på orderbekräftelsen.',
-        )
-      : null,
   );
   if (touched.has('items')) validateLive();
 }
