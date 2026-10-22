@@ -91,8 +91,8 @@ function packingSlip(order: Order): HTMLElement {
               h(
                 'tr',
                 {},
-                h('td', { colspan: 3 }, 'Kampanjrabatt'),
-                h('td', { class: 'number' }, `−${formatSek(order.discountSek)}`),
+                h('td', { colspan: 3 }, 'Att återbetala (kampanj)'),
+                h('td', { class: 'number' }, formatSek(order.discountSek)),
               ),
             ]
           : []),

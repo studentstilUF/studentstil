@@ -234,7 +234,13 @@ function row(order: Order): HTMLTableRowElement {
       ),
       order.campaign === null
         ? null
-        : h('div', { class: 'campaign-tag' }, campaignShortLabel(order.campaign)),
+        : h(
+            'div',
+            { class: 'campaign-tag' },
+            order.discountSek > 0
+              ? `${campaignShortLabel(order.campaign)}: ${formatSek(order.discountSek)}`
+              : campaignShortLabel(order.campaign),
+          ),
     ),
     h('td', {}, h('a', { href: `mailto:${order.email}` }, order.email)),
     h('td', { class: 'nowrap number' }, formatSek(order.totalSek)),
@@ -299,7 +305,7 @@ export function exportCsv(): void {
     'Ort',
     'Leverans',
     'Frakt (kr)',
-    'Rabatt (kr)',
+    'Att återbetala (kr)',
     'Kampanj',
     'E-post',
     'Mobil',

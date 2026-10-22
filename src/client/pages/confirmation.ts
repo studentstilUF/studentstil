@@ -63,7 +63,7 @@ function details(order: PublicOrder): HTMLElement {
     ['Leverans', deliveryLabel(order)],
     ['Frakt', shippingLabel(order.shippingSek)],
     ...(order.discountSek > 0
-      ? [['Kampanjrabatt', `−${formatSek(order.discountSek)}`] as [string, string]]
+      ? [['Återbetalning', formatSek(order.discountSek)] as [string, string]]
       : []),
     ['Att betala', formatSek(order.totalSek)],
   ];

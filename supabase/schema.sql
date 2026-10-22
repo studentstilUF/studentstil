@@ -140,7 +140,8 @@ alter table orders add column if not exists shipping_sek integer not null defaul
   check (shipping_sek >= 0);
 
 -- Kampanj: de 5 första vanliga beställningarna får en overall gratis
--- ('gratis-overall', rabatten i discount_sek) och de 5 första
+-- ('gratis-overall': alla betalar fullt pris, och discount_sek är beloppet
+-- som ni swishar tillbaka i efterhand) och de 5 första
 -- klassbeställningarna får ett flak Celsius ('flak-celsius'). Se create_order.
 alter table orders add column if not exists discount_sek integer not null default 0
   check (discount_sek >= 0);
@@ -388,7 +389,8 @@ begin
     end if;
   end if;
 
-  v_total := v_total - v_discount + v_shipping;
+  -- Kunden betalar fullt pris. discount_sek = det ni swishar tillbaka efteråt.
+  v_total := v_total + v_shipping;
   update orders set total_sek = v_total, shipping_sek = v_shipping,
                     discount_sek = v_discount, campaign = v_campaign
    where id = v_order.id returning * into v_order;

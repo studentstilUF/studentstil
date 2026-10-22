@@ -173,7 +173,7 @@ function renderCart(): void {
             'p',
             { class: 'campaign-hint' },
             h('strong', {}, 'Kampanj: '),
-            'är du en av de 5 första som beställer dras en overall av automatiskt. Det syns på orderbekräftelsen.',
+            'en återbetalning för en overall görs till de fem första beställningarna. Alla betalar fullt pris, och du är inte garanterad återbetalning – den gäller bara de fem första ordrarna. På orderbekräftelsen ser du om du är en av dem.',
           )
         : null,
     ),

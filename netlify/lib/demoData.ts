@@ -136,7 +136,7 @@ export function demoOrders(count = 48): Order[] {
       discountSek,
       campaign: discountSek > 0 ? 'gratis-overall' : null,
       items,
-      totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0) + shippingSek - discountSek,
+      totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0) + shippingSek,
       source: pick(SOURCES, random),
       paidAt: paid ? createdAt : null,
       shippedAt: status === 'skickad' || status === 'levererad' ? createdAt : null,
