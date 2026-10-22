@@ -6,14 +6,14 @@ import {
   SwishStartSchema,
 } from '../../shared/apiTypes.ts';
 import { campaignLabel } from '../../shared/campaign.ts';
-import { deliveryLabel, shippingLabel } from '../../shared/delivery.ts';
+import { deliveryLabel, shippingLabel, statusLabel, trackingUrl } from '../../shared/delivery.ts';
 import {
   formatDateTime,
   formatPostalCode,
   formatSek,
   formatSwishNumber,
 } from '../../shared/format.ts';
-import { type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
+import type { OrderStatus } from '../../shared/orderStatus.ts';
 import { apiGet, apiPost } from '../api.ts';
 import { byId, h, isMobileDevice, nodes } from '../dom.ts';
 import { qrCanvas } from '../qr.ts';
@@ -26,13 +26,24 @@ const returnedFromSwish = params.has('swish');
 
 const STATUS_TEXT: Record<OrderStatus, string> = {
   vantar_betalning:
-    'Varorna är reserverade åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi stämmer av inkomna Swish-betalningar manuellt, oftast inom ett dygn, och den här sidan uppdateras automatiskt när betalningen är registrerad. Du får även en bekräftelse via e-post.',
+    'Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi stämmer av inkomna Swish-betalningar manuellt, oftast inom ett dygn, och den här sidan uppdateras automatiskt när betalningen är registrerad. Du får även en bekräftelse via e-post.',
   betald: 'Tack! Vi har tagit emot din betalning och börjar packa din beställning.',
   packad: 'Din beställning är packad och skickas inom kort.',
-  skickad: 'Din beställning är skickad. Grattis till studenten!',
+  skickad: 'Din beställning är skickad med PostNord. Grattis till studenten!',
   levererad: 'Din beställning är levererad. Grattis till studenten!',
   avbruten: 'Beställningen är avbruten. Kontakta oss om du har frågor.',
 };
+
+/** Statustexten, anpassad efter skolhämtning eller hemleverans. */
+function statusText(order: PublicOrder): string {
+  if (order.delivery === 'skola' && order.status === 'skickad') {
+    return `Din beställning är klar att hämta på ${order.school ?? 'skolan'}. Ta med ordernumret.`;
+  }
+  if (order.delivery === 'skola' && order.status === 'levererad') {
+    return 'Du har hämtat din beställning. Grattis till studenten!';
+  }
+  return STATUS_TEXT[order.status];
+}
 
 let pollTimer: number | undefined;
 let pollCount = 0;
@@ -297,19 +308,29 @@ function paymentSection(order: PublicOrder): HTMLElement {
   );
 }
 
-/** Stegen i "Följ din order", i ordning. */
-const TRACK_STEPS: readonly { status: OrderStatus; label: string }[] = [
-  { status: 'vantar_betalning', label: 'Beställning mottagen' },
-  { status: 'betald', label: 'Betalning bekräftad' },
-  { status: 'packad', label: 'Packad' },
-  { status: 'skickad', label: 'Skickad' },
-  { status: 'levererad', label: 'Levererad' },
-];
+/**
+ * Stegen i "Följ din order". Skolhämtning slutar med "Hämtad" (ni lämnar ut
+ * paketet själva). Hemleverans slutar med "Skickad" – därefter visar
+ * PostNords spårning var paketet är.
+ */
+function trackSteps(order: PublicOrder): { status: OrderStatus; label: string }[] {
+  const steps: { status: OrderStatus; label: string }[] = [
+    { status: 'vantar_betalning', label: 'Beställning mottagen' },
+    { status: 'betald', label: 'Betalning bekräftad' },
+    { status: 'packad', label: 'Packad' },
+    { status: 'skickad', label: statusLabel('skickad', order.delivery) },
+  ];
+  if (order.delivery === 'skola') steps.push({ status: 'levererad', label: 'Hämtad' });
+  return steps;
+}
 
 /** "Följ din order": vilka steg som är klara och vilket som är aktuellt. */
 function tracker(order: PublicOrder): HTMLElement | null {
   if (order.status === 'avbruten') return null;
-  const current = TRACK_STEPS.findIndex((step) => step.status === order.status);
+  const steps = trackSteps(order);
+  const found = steps.findIndex((step) => step.status === order.status);
+  // "Levererad" vid hemleverans finns inte som steg: då är alla steg klara.
+  const current = found === -1 ? steps.length : found;
   return h(
     'section',
     { class: 'section', 'aria-labelledby': 'track-heading' },
@@ -317,7 +338,7 @@ function tracker(order: PublicOrder): HTMLElement | null {
     h(
       'ol',
       { class: 'order-track' },
-      ...TRACK_STEPS.map((step, i) =>
+      ...steps.map((step, i) =>
         h(
           'li',
           {
@@ -328,6 +349,22 @@ function tracker(order: PublicOrder): HTMLElement | null {
         ),
       ),
     ),
+    order.trackingNumber === null
+      ? null
+      : h(
+          'p',
+          {},
+          h(
+            'a',
+            {
+              class: 'button button-secondary',
+              href: trackingUrl(order.trackingNumber),
+              target: '_blank',
+              rel: 'noopener',
+            },
+            'Spåra paketet hos PostNord',
+          ),
+        ),
     h(
       'p',
       { class: 'muted small' },
@@ -360,10 +397,10 @@ function render(order: PublicOrder): void {
         h(
           'span',
           { class: 'status-badge', 'data-status': order.status },
-          STATUS_LABELS[order.status],
+          statusLabel(order.status, order.delivery),
         ),
       ),
-      h('p', { 'aria-live': 'polite' }, STATUS_TEXT[order.status]),
+      h('p', { 'aria-live': 'polite' }, statusText(order)),
       order.campaign === null
         ? null
         : h('p', { class: 'notice notice-ok campaign-notice' }, campaignLabel(order.campaign)),

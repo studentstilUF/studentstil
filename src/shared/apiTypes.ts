@@ -46,6 +46,8 @@ export const OrderSchema = v.object({
   /** Kampanj: belopp som swishas tillbaka i efterhand (gratis overall), och vilken kampanj. */
   discountSek: v.number(),
   campaign: v.nullable(CampaignSchema),
+  /** PostNords kollinummer (hemleverans), eller null. */
+  trackingNumber: v.nullable(v.string()),
   items: v.array(OrderItemSchema),
   totalSek: v.number(),
   source: v.string(),
@@ -109,6 +111,8 @@ export const PublicOrderSchema = v.object({
   /** Kampanj: belopp som swishas tillbaka i efterhand (gratis overall), och vilken kampanj. */
   discountSek: v.number(),
   campaign: v.nullable(CampaignSchema),
+  /** PostNords kollinummer (hemleverans), eller null. */
+  trackingNumber: v.nullable(v.string()),
   items: v.array(OrderItemSchema),
   totalSek: v.number(),
   paymentMode: PaymentModeSchema,

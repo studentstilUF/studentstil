@@ -52,6 +52,7 @@ export default handle(async (req) => {
     shippingSek: order.shippingSek,
     discountSek: order.discountSek,
     campaign: order.campaign,
+    trackingNumber: order.trackingNumber,
     items: order.items,
     totalSek: order.totalSek,
     paymentMode: mode,

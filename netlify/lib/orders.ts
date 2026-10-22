@@ -109,6 +109,24 @@ export async function setOrderStatus(
   }
 }
 
+/** Sparar PostNords kollinummer på ordern ('' tar bort det). */
+export async function setTrackingNumber(
+  orderNumber: string,
+  trackingNumber: string,
+): Promise<Order> {
+  try {
+    return v.parse(
+      OrderSchema,
+      await rpc('set_tracking_number', { p_order_number: orderNumber, p_tracking: trackingNumber }),
+    );
+  } catch (error) {
+    if (error instanceof DbError && error.code === 'ORDER_NOT_FOUND') {
+      throw new HttpError(404, 'Ordern finns inte.');
+    }
+    throw error;
+  }
+}
+
 /** Läge B: kopplar Swish betalförfrågan till ordern. */
 export async function setSwishPaymentId(orderNumber: string, paymentId: string): Promise<void> {
   await rpc('set_swish_payment_id', { p_order_number: orderNumber, p_payment_id: paymentId });

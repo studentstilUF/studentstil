@@ -135,6 +135,10 @@ export function demoOrders(count = 48): Order[] {
       shippingSek,
       discountSek,
       campaign: discountSek > 0 ? 'gratis-overall' : null,
+      trackingNumber:
+        !atSchool && (status === 'skickad' || status === 'levererad')
+          ? `0012345678${String(1000 + i)}`
+          : null,
       items,
       totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0) + shippingSek,
       source: pick(SOURCES, random),
@@ -213,6 +217,7 @@ function demoClassOrder(
     discountSek: 0,
     // Den första klassbeställningen i demon fick kampanjen.
     campaign: number % 2 === 1 ? 'flak-celsius' : null,
+    trackingNumber: null,
     items,
     totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0),
     source: 'webb',

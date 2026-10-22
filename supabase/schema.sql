@@ -145,6 +145,9 @@ alter table orders add column if not exists shipping_sek integer not null defaul
 -- klassbeställningarna får ett flak Celsius ('flak-celsius'). Se create_order.
 alter table orders add column if not exists discount_sek integer not null default 0
   check (discount_sek >= 0);
+-- PostNords kollinummer för hemleveranser, så att kunden kan spåra paketet.
+alter table orders add column if not exists tracking_number text
+  check (tracking_number ~ '^[A-Za-z0-9]{6,40}$');
 alter table orders add column if not exists campaign text
   check (campaign in ('gratis-overall', 'flak-celsius'));
 
@@ -211,6 +214,7 @@ as $$
     'shippingSek',  o.shipping_sek,
     'discountSek',  o.discount_sek,
     'campaign',     o.campaign,
+    'trackingNumber', o.tracking_number,
     'items', coalesce((
       select jsonb_agg(jsonb_build_object(
         'productId',    i.product_id,
@@ -258,10 +262,10 @@ as $$
 $$;
 
 -- ---------------------------------------------------------------------
--- Skapa order från en varukorg: kontrollerar lager, minskar lagret för
--- varje rad, räknar ut totalen och ger ordernummer. Allt sker i en
--- transaktion: tar en enda vara slut blir det ingen order alls, och två
--- kunder kan inte köpa samma sista vara.
+-- Skapa order från en varukorg: kontrollerar att varorna finns i lager
+-- (lagret dras först vid betalning, se set_order_status), räknar ut totalen
+-- och ger ordernummer. Allt sker i en transaktion: saknas en enda vara i
+-- lager blir det ingen order alls.
 --
 -- p.items = [{ "productId": "...", "size": "...", "quantity": 1 }, ...]
 -- p.kind  = 'privat' (vanlig varukorg) eller 'klass' (klassbeställning)
@@ -354,8 +358,9 @@ begin
       raise exception 'PRODUCT_NOT_FOUND' using detail = coalesce(v_item ->> 'productId', '');
     end if;
 
-    update product_sizes
-       set stock = stock - v_qty
+    -- Varan reserveras inte: lagret dras först när ordern blir betald
+    -- (set_order_status). Här kontrolleras bara att det finns tillräckligt.
+    perform 1 from product_sizes
      where product_id = v_product.id and size = v_item ->> 'size' and stock >= v_qty;
     if not found then
       raise exception 'OUT_OF_STOCK' using detail = format('%s (%s)', v_product.name, v_item ->> 'size');
@@ -432,8 +437,8 @@ as $$
 $$;
 
 -- ---------------------------------------------------------------------
--- Ändra status. Avbruten order lägger tillbaka varan i lager, och om en
--- avbruten order återaktiveras reserveras varan igen.
+-- Ändra status. Lagret dras när ordern blir betald och läggs tillbaka om en
+-- betald order avbryts. Obetalda ordrar håller inga varor.
 -- ---------------------------------------------------------------------
 create or replace function set_order_status(p_order_number text, p_status order_status, p_actor text)
 returns jsonb
@@ -443,7 +448,6 @@ as $$
 declare
   v_order orders%rowtype;
   v_prev  order_status;
-  v_item  order_items%rowtype;
 begin
   select * into v_order from orders where order_number = p_order_number for update;
   if not found then
@@ -455,18 +459,19 @@ begin
     return jsonb_build_object('order', order_json(v_order), 'previousStatus', v_prev);
   end if;
 
-  if p_status = 'avbruten' then
+  -- Lagret dras när ordern blir betald och läggs tillbaka om en betald
+  -- order avbryts eller flyttas tillbaka till "Väntar på betalning".
+  -- Obetalda ordrar håller inga varor.
+  if v_prev not in ('betald', 'packad', 'skickad', 'levererad')
+     and p_status in ('betald', 'packad', 'skickad', 'levererad') then
+    update product_sizes s set stock = greatest(s.stock - i.quantity, 0)
+      from order_items i
+     where i.order_id = v_order.id and s.product_id = i.product_id and s.size = i.size;
+  elsif v_prev in ('betald', 'packad', 'skickad', 'levererad')
+     and p_status not in ('betald', 'packad', 'skickad', 'levererad') then
     update product_sizes s set stock = s.stock + i.quantity
       from order_items i
      where i.order_id = v_order.id and s.product_id = i.product_id and s.size = i.size;
-  elsif v_prev = 'avbruten' then
-    for v_item in select * from order_items where order_id = v_order.id loop
-      update product_sizes set stock = stock - v_item.quantity
-       where product_id = v_item.product_id and size = v_item.size and stock >= v_item.quantity;
-      if not found then
-        raise exception 'OUT_OF_STOCK' using detail = format('%s (%s)', v_item.product_name, v_item.size);
-      end if;
-    end loop;
   end if;
 
   update orders set
@@ -574,6 +579,27 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------
+-- Sparar PostNords kollinummer på en order (tomt = ta bort).
+-- ---------------------------------------------------------------------
+create or replace function set_tracking_number(p_order_number text, p_tracking text) returns jsonb
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_order orders%rowtype;
+begin
+  update orders
+     set tracking_number = nullif(upper(replace(p_tracking, ' ', '')), ''), updated_at = now()
+   where order_number = p_order_number
+  returning * into v_order;
+  if not found then
+    raise exception 'ORDER_NOT_FOUND';
+  end if;
+  return order_json(v_order);
+end;
+$$;
+
+-- ---------------------------------------------------------------------
 -- Avbryter obetalda ordrar som är äldre än p_days dagar (köpvillkoren: 7 dagar).
 -- Varorna läggs tillbaka i lager och en eventuell kampanjplats blir ledig.
 -- Körs varje natt av dailyMaintenance.
@@ -612,7 +638,8 @@ revoke execute on function
   mark_paid_by_swish(text, numeric, text),
   rate_limit_hit(text, integer, integer),
   anonymize_old_orders(integer),
-  cancel_unpaid_orders(integer)
+  cancel_unpaid_orders(integer),
+  set_tracking_number(text, text)
 from public, anon, authenticated;
 
 grant execute on function
@@ -626,5 +653,6 @@ grant execute on function
   mark_paid_by_swish(text, numeric, text),
   rate_limit_hit(text, integer, integer),
   anonymize_old_orders(integer),
-  cancel_unpaid_orders(integer)
+  cancel_unpaid_orders(integer),
+  set_tracking_number(text, text)
 to service_role;

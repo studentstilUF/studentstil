@@ -1,6 +1,7 @@
 /** Hämtar och visar produktkort. Används på startsidan och produktsidan. */
 import { type Product, ProductsResponseSchema } from '../shared/apiTypes.ts';
 import { formatSek } from '../shared/format.ts';
+import { MAX_QUANTITY } from '../shared/orderInput.ts';
 import { apiGet } from './api.ts';
 import { addToCart } from './cart.ts';
 import { colorSwatch } from './colorSwatch.ts';
@@ -91,7 +92,11 @@ function addToCartForm(product: Product): HTMLElement {
       select.focus();
       return;
     }
-    addToCart(product.id, select.value);
+    if (addToCart(product.id, select.value) === 0) {
+      status.className = 'add-status small field-error';
+      status.textContent = `Du har redan ${String(MAX_QUANTITY)} st i varukorgen, det är max per vara.`;
+      return;
+    }
     status.className = 'add-status small';
     status.replaceChildren(
       choice ? `Tillagd: ${product.name}, ${select.value}. ` : `Tillagd: ${product.name}. `,

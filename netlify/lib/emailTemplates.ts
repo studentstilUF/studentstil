@@ -1,7 +1,7 @@
 /** Texter för alla mejl. Ändra formuleringarna här. */
 import { itemCount, type Order } from '../../src/shared/apiTypes.ts';
 import { campaignLabel } from '../../src/shared/campaign.ts';
-import { deliveryLabel, shippingLabel } from '../../src/shared/delivery.ts';
+import { deliveryLabel, shippingLabel, trackingUrl } from '../../src/shared/delivery.ts';
 import { formatPostalCode, formatSek, formatSwishNumber } from '../../src/shared/format.ts';
 import type { Email } from './email.ts';
 import { siteUrl } from './env.ts';
@@ -96,7 +96,7 @@ export function orderConfirmationEmail(
       : `Har du inte betalat än? Swisha ${formatSek(order.totalSek)} till ${formatSwishNumber(manual.payee)} och skriv ${order.orderNumber} som meddelande. Har du redan betalat behöver du inte göra något – vi mejlar dig när betalningen är registrerad.`;
 
   const intro =
-    'Vi har tagit emot din beställning och reserverat varorna åt dig. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi stämmer av inkomna Swish-betalningar manuellt, oftast inom ett dygn, och meddelar dig via e-post så snart betalningen är registrerad.';
+    'Vi har tagit emot din beställning. Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi stämmer av inkomna Swish-betalningar manuellt, oftast inom ett dygn, och meddelar dig via e-post så snart betalningen är registrerad.';
   const trackInfo =
     'Under "Följ din order" ser du hela tiden om vi har registrerat din betalning och när ordern packas och skickas. Sidan uppdateras automatiskt.';
 
@@ -129,14 +129,27 @@ export function paidEmail(order: Order): Email {
 }
 
 export function shippedEmail(order: Order): Email {
+  if (order.delivery === 'skola') {
+    const place = order.school ?? 'skolan';
+    return {
+      to: order.email,
+      subject: `Klar att hämta – ${order.orderNumber}`,
+      html: layout(
+        'Din beställning är klar att hämta',
+        `<p>Din beställning är packad och klar att hämta på <strong>${escapeHtml(place)}</strong>. Ta med ordernumret <strong>${escapeHtml(order.orderNumber)}</strong>.</p>${summaryHtml(order)}`,
+      ),
+      text: `Din beställning är klar att hämta på ${place}. Ta med ordernumret ${order.orderNumber}.\n\n${summaryText(order)}\n\nStudentstil`,
+    };
+  }
+  const tracking = order.trackingNumber === null ? null : trackingUrl(order.trackingNumber);
   return {
     to: order.email,
     subject: `Din beställning är på väg – ${order.orderNumber}`,
     html: layout(
       'Din beställning är på väg',
-      `<p>Nu har vi skickat din beställning. Grattis till studenten!</p>${summaryHtml(order)}`,
+      `<p>Nu har vi skickat din beställning med PostNord. Grattis till studenten!</p>${tracking === null ? '' : button(tracking, 'Spåra paketet hos PostNord')}${summaryHtml(order)}`,
     ),
-    text: `Din beställning är på väg. Grattis till studenten!\n\n${summaryText(order)}\n\nStudentstil`,
+    text: `Din beställning är på väg med PostNord. Grattis till studenten!${tracking === null ? '' : `\n\nSpåra paketet: ${tracking}`}\n\n${summaryText(order)}\n\nStudentstil`,
   };
 }
 

@@ -41,6 +41,7 @@ function order(overrides: Partial<Order>): Order {
     shippingSek: 0,
     discountSek: 0,
     campaign: null,
+    trackingNumber: null,
     source: 'webb',
     paidAt: null,
     shippedAt: null,

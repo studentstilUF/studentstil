@@ -2,7 +2,7 @@ import type { Order, OrderItem } from '../../shared/apiTypes.ts';
 /** Orderlistan i adminpanelen: sök, filter, sortering, statusändring och CSV-export. */
 import { campaignShortLabel } from '../../shared/campaign.ts';
 import { toCsv } from '../../shared/csv.ts';
-import { deliveryLabel } from '../../shared/delivery.ts';
+import { deliveryLabel, statusLabel } from '../../shared/delivery.ts';
 import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format.ts';
 import { ORDER_STATUSES, type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
 import { sourceChannel } from '../../shared/source.ts';
@@ -48,6 +48,35 @@ let orders: Order[] = [];
 let sortKey: SortKey = 'createdAt';
 let sortDirection: 1 | -1 = -1;
 let onStatusChange: StatusChangeHandler = () => Promise.resolve();
+type TrackingHandler = (order: Order, trackingNumber: string) => Promise<void>;
+let onTrackingChange: TrackingHandler = () => Promise.resolve();
+
+/** Hemleverans: fält för PostNords kollinummer, så att kunden kan spåra paketet. */
+function trackingForm(order: Order): HTMLFormElement | null {
+  if (order.delivery !== 'hem') return null;
+  const input = h('input', {
+    type: 'text',
+    value: order.trackingNumber ?? '',
+    placeholder: 'Kollinummer',
+    'aria-label': `PostNords kollinummer för ${order.orderNumber}`,
+    maxlength: 40,
+    class: 'tracking-input',
+  });
+  const save = h('button', { type: 'submit', class: 'link-button small' }, 'Spara');
+  const form = h('form', { class: 'tracking-form' }, input, save);
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    save.disabled = true;
+    onTrackingChange(order, input.value)
+      .catch((error: unknown) => {
+        window.alert(error instanceof Error ? error.message : 'Kunde inte spara kollinumret.');
+      })
+      .finally(() => {
+        save.disabled = false;
+      });
+  });
+  return form;
+}
 
 function sourceLabel(source: string): string {
   const channel = sourceChannel(source);
@@ -158,7 +187,7 @@ function statusSelect(order: Order): HTMLSelectElement {
       class: 'status-select',
     },
     ...ORDER_STATUSES.map((s) =>
-      h('option', { value: s, selected: s === order.status }, STATUS_LABELS[s]),
+      h('option', { value: s, selected: s === order.status }, statusLabel(s, order.delivery)),
     ),
   );
   select.addEventListener('change', () => {
@@ -166,7 +195,9 @@ function statusSelect(order: Order): HTMLSelectElement {
     if (next === undefined) return;
     if (
       next === 'avbruten' &&
-      !window.confirm(`Avbryta ${order.orderNumber}? Varan läggs tillbaka i lager.`)
+      !window.confirm(
+        `Avbryta ${order.orderNumber}? Var ordern betald läggs varan tillbaka i lager.`,
+      )
     ) {
       select.value = order.status;
       return;
@@ -245,7 +276,7 @@ function row(order: Order): HTMLTableRowElement {
     h('td', {}, h('a', { href: `mailto:${order.email}` }, order.email)),
     h('td', { class: 'nowrap number' }, formatSek(order.totalSek)),
     h('td', { class: 'nowrap' }, sourceLabel(order.source)),
-    h('td', {}, statusSelect(order)),
+    h('td', {}, statusSelect(order), trackingForm(order)),
   );
 }
 
@@ -361,8 +392,9 @@ function sortBy(column: string | undefined): void {
   renderOrders();
 }
 
-export function initOrdersView(handler: StatusChangeHandler): void {
+export function initOrdersView(handler: StatusChangeHandler, tracking: TrackingHandler): void {
   onStatusChange = handler;
+  onTrackingChange = tracking;
   for (const element of [search, statusFilter, classFilter, sizeFilter, sourceFilter]) {
     element.addEventListener('input', renderOrders);
   }

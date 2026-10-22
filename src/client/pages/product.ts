@@ -144,7 +144,13 @@ function renderProduct(product: Product): void {
       form.querySelector<HTMLInputElement>('input[name="variant"]:not(:disabled)')?.focus();
       return;
     }
-    addToCart(product.id, selected.value, quantity);
+    const added = addToCart(product.id, selected.value, quantity);
+    if (added === 0) {
+      status.className = 'add-status field-error';
+      status.textContent = `Du har redan ${String(MAX_QUANTITY)} st i varukorgen, det är max per vara.`;
+      return;
+    }
+    quantity = added;
     status.className = 'add-status';
     status.replaceChildren(
       hasVariantChoice(product)

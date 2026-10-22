@@ -40,8 +40,15 @@ function saveCart(lines: readonly CartLine[]): void {
   window.dispatchEvent(new CustomEvent(CART_CHANGED));
 }
 
-export function addToCart(productId: string, size: string, quantity = 1): void {
-  saveCart([...getCart(), { productId, size, quantity }]);
+/**
+ * Lägger till varor. Högst MAX_QUANTITY av samma vara får plats, så det som
+ * faktiskt lades till returneras (0 om varukorgen redan har max).
+ */
+export function addToCart(productId: string, size: string, quantity = 1): number {
+  const before = getCart().find((l) => l.productId === productId && l.size === size)?.quantity ?? 0;
+  const added = Math.max(0, Math.min(quantity, MAX_QUANTITY - before));
+  if (added > 0) saveCart([...getCart(), { productId, size, quantity: added }]);
+  return added;
 }
 
 export function setQuantity(productId: string, size: string, quantity: number): void {

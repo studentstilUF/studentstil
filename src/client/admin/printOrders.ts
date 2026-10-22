@@ -5,9 +5,8 @@
  */
 import type { Order } from '../../shared/apiTypes.ts';
 import { campaignShortLabel } from '../../shared/campaign.ts';
-import { deliveryLabel, shippingLabel } from '../../shared/delivery.ts';
+import { deliveryLabel, shippingLabel, statusLabel } from '../../shared/delivery.ts';
 import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format.ts';
-import { STATUS_LABELS } from '../../shared/orderStatus.ts';
 import { h, nodes } from '../dom.ts';
 
 function row(label: string, value: string): HTMLElement {
@@ -23,7 +22,7 @@ function packingSlip(order: Order): HTMLElement {
       'header',
       { class: 'print-order-head' },
       h('h2', {}, order.orderNumber),
-      h('span', { class: 'print-status' }, STATUS_LABELS[order.status]),
+      h('span', { class: 'print-status' }, statusLabel(order.status, order.delivery)),
     ),
     h(
       'p',

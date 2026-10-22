@@ -77,7 +77,7 @@ Gå igenom hela listan på den publicerade sajten (eller en deploy preview) **b�
 - [ ] Orderbekräftelsesidan visar **Följ din order**. Sätt ordern till Betald i admin: inom ca 20 sekunder byts steget till "Betalning bekräftad" utan att sidan laddas om.
 
 - [ ] En testbeställning ger ordernummer `SS-2026-0001` (sedan 0002 …) och leder till orderbekräftelsen.
-- [ ] Lagret i Supabase minskar med rätt antal för varje vara. Tabellen `order_items` har en rad per vara.
+- [ ] Lagret i Supabase ändras **inte** när en order skapas. När ordern sätts till Betald minskar lagret med rätt antal. Tabellen `order_items` har en rad per vara.
 - [ ] Kunden får ett bekräftelsemejl (inte i skräpposten) med ordernummer, sammanfattning och Swish-instruktioner.
 - [ ] Studentstil får en notis till `SHOP_EMAIL`.
 - [ ] Länken i mejlet öppnar orderbekräftelsen.
@@ -115,7 +115,7 @@ Gå igenom hela listan på den publicerade sajten (eller en deploy preview) **b�
 - [ ] Inloggning som `admin` visar riktiga ordrar.
 - [ ] Inloggning som `demo` visar bannern **Demoläge** och bara påhittade namn (`@example.com`). Statusändringar sparas inte.
 - [ ] Sök, alla filter (status, klass, storlek, källa) och sortering på kolumnrubriker fungerar.
-- [ ] **Avbruten** frågar om bekräftelse och lägger tillbaka varan i lager.
+- [ ] **Avbruten** frågar om bekräftelse. Var ordern betald läggs varan tillbaka i lager.
 - [ ] Sammanställningen visar rätt antal per storlek, klass och källa och rätt totalsumma.
 - [ ] CSV-exporten öppnas i Excel med å, ä, ö och rätt kolumner.
 - [ ] Filtrera på "Betald" och tryck **Skriv ut ordrar**: en packsedel per order (ordernummer, leverans/skola, varor med kryssrutor, totalt), och ingen sedel delas mellan två sidor.

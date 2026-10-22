@@ -67,6 +67,16 @@ async function changeStatus(order: Order, status: OrderStatus): Promise<void> {
   renderSummary(orders);
 }
 
+async function saveTracking(order: Order, trackingNumber: string): Promise<void> {
+  const response = await apiPost(
+    '/api/admin/orders/tracking',
+    { orderNumber: order.orderNumber, trackingNumber },
+    StatusUpdateResponseSchema,
+  );
+  orders = orders.map((o) => (o.orderNumber === response.order.orderNumber ? response.order : o));
+  replaceOrder(response.order);
+}
+
 function selectTab(name: string): void {
   for (const tab of document.querySelectorAll<HTMLButtonElement>('[role="tab"]')) {
     const selected = tab.dataset['tab'] === name;
@@ -103,7 +113,7 @@ async function login(): Promise<void> {
 }
 
 async function init(): Promise<void> {
-  initOrdersView(changeStatus);
+  initOrdersView(changeStatus, saveTracking);
   loginForm.addEventListener('submit', (event) => {
     event.preventDefault();
     void login();

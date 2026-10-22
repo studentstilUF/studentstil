@@ -9,6 +9,8 @@
  */
 import * as v from 'valibot';
 
+import { type OrderStatus, STATUS_LABELS } from './orderStatus.ts';
+
 /** Fraktkostnad i kronor när paketet skickas hem. */
 export const SHIPPING_FEE_SEK = 49;
 
@@ -66,4 +68,16 @@ export function deliveryLabel(order: {
 /** "Gratis" eller t.ex. "49 kr". */
 export function shippingLabel(shippingSek: number): string {
   return shippingSek === 0 ? 'Gratis' : `${String(shippingSek)} kr`;
+}
+
+/** Statusnamn som passar leveranssättet: skolhämtning blir "Klar att hämta" och "Hämtad". */
+export function statusLabel(status: OrderStatus, delivery: Delivery): string {
+  if (delivery === 'skola' && status === 'skickad') return 'Klar att hämta';
+  if (delivery === 'skola' && status === 'levererad') return 'Hämtad';
+  return STATUS_LABELS[status];
+}
+
+/** Länk till PostNords spårning för ett kollinummer. */
+export function trackingUrl(trackingNumber: string): string {
+  return `https://tracking.postnord.com/se/?id=${encodeURIComponent(trackingNumber)}`;
 }
