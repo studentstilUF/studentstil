@@ -260,8 +260,7 @@ $$;
 -- Gränsen 25 finns även i src/shared/classOrder.ts – ändra på båda ställena.
 --
 -- FRAKT: p.delivery = 'skola' (gratis, hämtas på skolan i p.school) eller 'hem'
--- (49 kr, klassbeställningar 25 kr per overall men minst 49 kr). Vanliga
--- beställningar får fri frakt när varorna kostar mer än 900 kr.
+-- (49 kr, klassbeställningar 25 kr per overall men minst 49 kr).
 -- Fraktpriset finns även i src/shared/delivery.ts – ändra på båda ställena.
 -- ---------------------------------------------------------------------
 create or replace function create_order(p jsonb) returns jsonb
@@ -357,10 +356,6 @@ begin
     v_total := v_total + v_price * v_qty;
   end loop;
 
-  -- Fri frakt för vanliga beställningar när varorna kostar mer än 900 kr.
-  if v_kind = 'privat' and v_total > 900 then
-    v_shipping := 0;
-  end if;
   v_total := v_total + v_shipping;
   update orders set total_sek = v_total, shipping_sek = v_shipping where id = v_order.id returning * into v_order;
 

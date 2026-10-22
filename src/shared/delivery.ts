@@ -18,9 +18,6 @@ export const SHIPPING_FEE_SEK = 49;
  */
 export const CLASS_SHIPPING_PER_OVERALL_SEK = 25;
 
-/** Fri frakt för vanliga beställningar när varorna kostar mer än så här (kr). */
-export const FREE_SHIPPING_OVER_SEK = 900;
-
 /** Gymnasieskolor i Kungsbacka där man kan hämta sitt paket. Ändra listan här. */
 export const KUNGSBACKA_SCHOOLS = [
   'Aranäsgymnasiet',
@@ -49,10 +46,9 @@ export function shippingFee(
   delivery: Delivery,
   kind: 'privat' | 'klass' = 'privat',
   overalls = 0,
-  itemsTotalSek = 0,
 ): number {
   if (delivery === 'skola') return 0;
-  if (kind === 'privat') return itemsTotalSek > FREE_SHIPPING_OVER_SEK ? 0 : SHIPPING_FEE_SEK;
+  if (kind === 'privat') return SHIPPING_FEE_SEK;
   return Math.max(SHIPPING_FEE_SEK, CLASS_SHIPPING_PER_OVERALL_SEK * overalls);
 }
 
