@@ -71,7 +71,7 @@ export function deliveryChoice({
   const homeOption = option('hem', 'Hemleverans', homeText, homePrice);
   const select = h(
     'select',
-    { id: 'school', 'aria-describedby': 'school-error' },
+    { id: 'school', name: 'school', 'aria-describedby': 'school-error' },
     h('option', { value: '' }, 'Välj skola …'),
     ...KUNGSBACKA_SCHOOLS.map((school) => h('option', { value: school }, school)),
   );
@@ -83,6 +83,7 @@ export function deliveryChoice({
   );
   const schoolText = h('input', {
     id: 'school-name',
+    name: 'school',
     type: 'text',
     autocomplete: 'organization',
     maxlength: 100,
