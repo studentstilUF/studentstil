@@ -114,3 +114,71 @@ describe('validateOrderInput', () => {
     expect(result.ok && result.data.comment).toBe('Rad 1\nRad 2');
   });
 });
+
+describe('kryphål: manipulerade beställningar', () => {
+  it.each([-1, 0, 1.5, 'abc', '1e3', Number.NaN])('avvisar antal %s', (quantity) => {
+    const result = validateOrderInput({
+      ...valid,
+      items: [{ productId: 'studentoverall', size: 'M', quantity }],
+    });
+    expect(result.ok).toBe(false);
+  });
+
+  it('ger aldrig fler än 10 av samma vara, även om raden delas upp', () => {
+    const result = validateOrderInput({
+      ...valid,
+      items: [
+        { productId: 'studentoverall', size: 'M', quantity: 10 },
+        { productId: 'studentoverall', size: 'M', quantity: 10 },
+      ],
+    });
+    // Raderna slås ihop och tak sätts på 10 – kunden kan aldrig få fler än 10.
+    expect(result.ok && result.data.items[0]?.quantity).toBe(10);
+  });
+
+  it('avvisar fler än 20 olika rader', () => {
+    const items = Array.from({ length: 21 }, (_, i) => ({
+      productId: 'sprayfarg',
+      size: `Färg ${String(i)}`,
+      quantity: 1,
+    }));
+    expect(validateOrderInput({ ...valid, items }).ok).toBe(false);
+  });
+
+  it('släpper inte igenom egna priser, rabatter eller frakt från webbläsaren', () => {
+    const result = validateOrderInput({
+      ...valid,
+      totalSek: 1,
+      shippingSek: 0,
+      discountSek: 9999,
+      campaign: 'gratis-overall',
+      items: [{ productId: 'studentoverall', size: 'M', quantity: 1, unitPriceSek: 1 }],
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data).not.toHaveProperty('totalSek');
+    expect(result.data).not.toHaveProperty('shippingSek');
+    expect(result.data).not.toHaveProperty('discountSek');
+    expect(result.data).not.toHaveProperty('campaign');
+    expect(result.data.items[0]).not.toHaveProperty('unitPriceSek');
+  });
+
+  it('avvisar okänt leveranssätt', () => {
+    expect(validateOrderInput({ ...valid, delivery: 'gratis' }).ok).toBe(false);
+  });
+
+  it('sparar ingen skola vid hemleverans', () => {
+    const result = validateOrderInput({ ...valid, delivery: 'hem', school: 'Aranäsgymnasiet' });
+    expect(result.ok && result.data.school).toBe('');
+  });
+
+  it('avvisar hämtning på en skola som inte finns i listan', () => {
+    const result = validateOrderInput({
+      ...valid,
+      delivery: 'skola',
+      postalCode: '434 30',
+      school: 'Påhittade gymnasiet',
+    });
+    expect(!result.ok && result.errors['school']).toMatch(/Välj vilken skola/u);
+  });
+});
