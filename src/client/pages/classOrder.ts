@@ -215,7 +215,11 @@ function renderSummary(): void {
         h('span', {}, 'Att betala'),
         h('span', {}, formatSek(price.totalSek + shipping)),
       ),
-      h('p', { class: 'muted small' }, 'Moms tillkommer inte – Studentstil UF är inte momsregistrerat.'),
+      h(
+        'p',
+        { class: 'muted small' },
+        'Moms tillkommer inte – Studentstil UF är inte momsregistrerat.',
+      ),
       h(
         'p',
         { class: 'campaign-hint' },
