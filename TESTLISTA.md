@@ -118,6 +118,7 @@ Gå igenom hela listan på den publicerade sajten (eller en deploy preview) **b�
 - [ ] **Avbruten** frågar om bekräftelse och lägger tillbaka varan i lager.
 - [ ] Sammanställningen visar rätt antal per storlek, klass och källa och rätt totalsumma.
 - [ ] CSV-exporten öppnas i Excel med å, ä, ö och rätt kolumner.
+- [ ] Filtrera på "Betald" och tryck **Skriv ut ordrar**: en packsedel per order (ordernummer, leverans/skola, varor med kryssrutor, totalt), och ingen sedel delas mellan två sidor.
 - [ ] **Logga ut** fungerar. Att sedan gå tillbaka till `/admin/` kräver ny inloggning.
 
 ## Efter lansering
