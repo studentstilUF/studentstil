@@ -90,7 +90,7 @@ function packingSlip(order: Order): HTMLElement {
               h(
                 'tr',
                 {},
-                h('td', { colspan: 3 }, 'Paketrabatt 5 %'),
+                h('td', { colspan: 3 }, 'Paketrabatt 10 %'),
                 h('td', { class: 'number' }, `−${formatSek(order.bundleDiscountSek)}`),
               ),
             ]

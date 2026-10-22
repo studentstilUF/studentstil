@@ -3,17 +3,17 @@ import { describe, expect, it } from 'vitest';
 import { bundleCount, bundleDiscount, bundlePrice } from './bundle.ts';
 
 const products = [
-  { id: 'studentoverall', priceSek: 299 },
+  { id: 'studentoverall', priceSek: 329 },
   { id: 'sprayfarg', priceSek: 79 },
   { id: 'spritpenna', priceSek: 139 },
 ];
 
 describe('studentpaketet', () => {
   it('räknar ordinarie paketpris', () => {
-    expect(bundlePrice(products)).toBe(299 + 2 * 79 + 139);
+    expect(bundlePrice(products)).toBe(329 + 2 * 79 + 139);
   });
 
-  it('ger 5 % på ett komplett paket, oavsett storlek och färger', () => {
+  it('ger 10 % på ett komplett paket, oavsett storlek och färger', () => {
     const lines = [
       { productId: 'studentoverall', quantity: 1 },
       { productId: 'sprayfarg', quantity: 1 },
@@ -21,7 +21,7 @@ describe('studentpaketet', () => {
       { productId: 'spritpenna', quantity: 1 },
     ];
     expect(bundleCount(lines)).toBe(1);
-    expect(bundleDiscount(lines, products)).toBe(Math.round(596 * 0.05));
+    expect(bundleDiscount(lines, products)).toBe(Math.round(626 * 0.1));
   });
 
   it('ger ingen rabatt när något saknas', () => {
@@ -40,6 +40,6 @@ describe('studentpaketet', () => {
       { productId: 'spritpenna', quantity: 3 },
     ];
     expect(bundleCount(lines)).toBe(2);
-    expect(bundleDiscount(lines, products)).toBe(Math.round(2 * 596 * 0.05));
+    expect(bundleDiscount(lines, products)).toBe(Math.round(2 * 626 * 0.1));
   });
 });

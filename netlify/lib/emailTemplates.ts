@@ -36,7 +36,7 @@ function summaryHtml(order: Order): string {
     ['Leverans', deliveryLabel(order)],
     ['Frakt', shippingLabel(order.shippingSek)],
     ...(order.bundleDiscountSek > 0
-      ? [['Paketrabatt 5 %', `−${formatSek(order.bundleDiscountSek)}`] as [string, string]]
+      ? [['Paketrabatt 10 %', `−${formatSek(order.bundleDiscountSek)}`] as [string, string]]
       : []),
     ...(order.discountSek > 0
       ? [['Återbetalning', formatSek(order.discountSek)] as [string, string]]
@@ -69,7 +69,7 @@ function summaryText(order: Order): string {
     `Leverans: ${deliveryLabel(order)}`,
     `Frakt: ${shippingLabel(order.shippingSek)}`,
     ...(order.bundleDiscountSek > 0
-      ? [`Paketrabatt 5 %: −${formatSek(order.bundleDiscountSek)}`]
+      ? [`Paketrabatt 10 %: −${formatSek(order.bundleDiscountSek)}`]
       : []),
     ...(order.discountSek > 0 ? [`Återbetalning: ${formatSek(order.discountSek)}`] : []),
     ...(order.campaign === null ? [] : [`Kampanj: ${campaignLabel(order.campaign)}`]),

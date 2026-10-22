@@ -1,13 +1,13 @@
 /**
  * Studentpaketet: 1 studentoverall + 2 sprayfärger + 1 förpackning spritpennor.
- * För varje komplett paket i en vanlig beställning dras 5 % av paketets pris.
+ * För varje komplett paket i en vanlig beställning dras 10 % av paketets pris.
  * Storlek och färger får man välja fritt.
  *
  * Samma regel finns i create_order i supabase/schema.sql (det riktiga priset).
  * Ändra på båda ställena.
  */
 
-export const BUNDLE_DISCOUNT_PERCENT = 5;
+export const BUNDLE_DISCOUNT_PERCENT = 10;
 
 /** Vad som ingår i ett paket: produkt → antal. */
 export const BUNDLE_CONTENTS = [

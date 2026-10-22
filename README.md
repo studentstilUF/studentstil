@@ -389,10 +389,10 @@ Alla ordrar märks med sin källa. Ordrar via sajten får `webb` och ordrar via 
 - Klassbeställningar märks **Klassbeställning** i adminpanelen. Välj "Klassbeställningar" under **Typ / källa** för att se bara dem.
 - Kontrollera att lagret räcker innan stora klasser beställer. Om en storlek inte räcker skapas ingen order, och klassrepresentanten får veta vilken vara det gäller.
 
-## 13e. Studentpaketet (5 % rabatt)
+## 13e. Studentpaketet (10 % rabatt)
 
 - Sidan `/paket/` låter kunden välja overallens storlek och två sprayfärger. Overall, sprayfärger och spritpennor läggs i varukorgen.
-- För varje **komplett paket** (1 overall + 2 sprayfärger + 1 spritpennor) i en vanlig beställning dras **5 %** av paketets pris. Det fungerar även om kunden lägger varorna i varukorgen var för sig.
+- För varje **komplett paket** (1 overall + 2 sprayfärger + 1 spritpennor) i en vanlig beställning dras **10 %** av paketets pris. Det fungerar även om kunden lägger varorna i varukorgen var för sig.
 - Rabatten räknas i `create_order` i `supabase/schema.sql` och visas i kassan via `src/shared/bundle.ts`. Ändra på båda ställena. Klassbeställningar får ingen paketrabatt, eftersom de har klasspris.
 
 ## 13f. Synlighet på Google

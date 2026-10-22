@@ -157,7 +157,7 @@ function renderCart(): void {
         ? h(
             'p',
             { class: 'order-line bundle-line' },
-            h('span', {}, 'Studentpaketet −5 %'),
+            h('span', {}, 'Studentpaketet −10 %'),
             h('span', {}, `−${formatSek(bundle)}`),
           )
         : null,

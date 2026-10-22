@@ -1,6 +1,6 @@
 /**
  * Studentpaketet (/paket/): välj overallens storlek och två sprayfärger, så
- * läggs overall, sprayfärger och spritpennor i varukorgen. Paketrabatten (5 %)
+ * läggs overall, sprayfärger och spritpennor i varukorgen. Paketrabatten (10 %)
  * räknas sedan automatiskt i kassan och i databasen.
  */
 import type { Product } from '../../shared/apiTypes.ts';

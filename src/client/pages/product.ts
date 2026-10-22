@@ -1,5 +1,6 @@
 /** Produktsidan (/produkt/?id=…): stora bilder, val av storlek/färg, antal och "Lägg i varukorgen". */
 import type { Product } from '../../shared/apiTypes.ts';
+import { BUNDLE_CONTENTS, BUNDLE_DISCOUNT_PERCENT, bundlePrice } from '../../shared/bundle.ts';
 import { formatSek } from '../../shared/format.ts';
 import { MAX_QUANTITY } from '../../shared/orderInput.ts';
 import { addToCart } from '../cart.ts';
@@ -116,7 +117,24 @@ function addStructuredData(product: Product): void {
   document.head.append(script);
 }
 
-function renderProduct(product: Product): void {
+/** Ruta som visar att varan blir billigare i Studentpaketet. */
+function bundleBox(product: Product, products: readonly Product[]): HTMLElement | null {
+  if (!BUNDLE_CONTENTS.some((c) => c.productId === product.id)) return null;
+  const full = bundlePrice(products);
+  const price = full - Math.round((full * BUNDLE_DISCOUNT_PERCENT) / 100);
+  return h(
+    'a',
+    { class: 'bundle-box', href: '/paket/' },
+    h('strong', {}, `Billigare i Studentpaketet – spara ${String(BUNDLE_DISCOUNT_PERCENT)} %`),
+    h(
+      'span',
+      {},
+      `Overall, två sprayfärger och spritpennor för ${formatSek(price)} i stället för ${formatSek(full)}. Välj paketet →`,
+    ),
+  );
+}
+
+function renderProduct(product: Product, products: readonly Product[]): void {
   addStructuredData(product);
   document.title = `${product.name} – Studentstil`;
   breadcrumb.textContent = product.name;
@@ -210,6 +228,7 @@ function renderProduct(product: Product): void {
               'Kampanj: gratis overall till de 5 första beställningarna',
             )
           : null,
+        bundleBox(product, products),
         h('p', { class: 'product-description' }, product.description),
         inStock ? form : h('p', { class: 'notice' }, 'Slut i lager just nu. Kom tillbaka snart!'),
         h(
@@ -259,7 +278,7 @@ async function init(): Promise<void> {
       renderNotFound('Länken kan vara gammal, eller så säljer vi inte produkten längre.');
       return;
     }
-    renderProduct(product);
+    renderProduct(product, products);
     renderRelated(products, product);
   } catch (error) {
     renderNotFound(error instanceof Error ? error.message : 'Kunde inte hämta produkten.');

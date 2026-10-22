@@ -32,7 +32,7 @@ const PRODUCTS = [
   {
     id: 'studentoverall',
     name: 'Studentoverall',
-    price: 299,
+    price: 329,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
   },
   {
@@ -192,7 +192,7 @@ function demoClassOrder(
     ...['XS', 'S', 'M', 'L', 'XL'].flatMap((size, i) => {
       const quantity = overallsPerSize[i] ?? 0;
       return quantity > 0
-        ? [line('studentoverall', 'Studentoverall', size, quantity, bulk ? 269 : 299)]
+        ? [line('studentoverall', 'Studentoverall', size, quantity, bulk ? 279 : 329)]
         : [];
     }),
     line('sprayfarg', 'Sprayfärg', 'Röd', sprays, bulk ? 69 : 79),

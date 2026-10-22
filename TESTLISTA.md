@@ -63,7 +63,7 @@ Gå igenom hela listan på den publicerade sajten (eller en deploy preview) **b�
 
 ## Kassan och validering
 
-- [ ] /paket/: välj storlek och två färger. Fyra rader hamnar i varukorgen, och kassan visar "Studentpaketet −5 %" (30 kr). Ordern i Supabase har samma rabatt.
+- [ ] /paket/: välj storlek och två färger. Fyra rader hamnar i varukorgen, och kassan visar "Studentpaketet −10 %" (63 kr). Ordern i Supabase har samma rabatt.
 - [ ] Postnummer utanför Kungsbacka: "Hämta på en skola" går inte att välja, och frakten 49 kr läggs till i totalen.
 - [ ] Postnummer 434 30: skolhämtning väljs, listan med gymnasieskolor visas och frakten blir Gratis. Utan vald skola visas "Välj vilken skola …".
 - [ ] Skolan och frakten syns i orderbekräftelsen, mejlet, admin och CSV:n, och Swish-beloppet är varor + frakt.

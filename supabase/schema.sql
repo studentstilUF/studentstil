@@ -148,7 +148,7 @@ alter table orders add column if not exists discount_sek integer not null defaul
 -- PostNords kollinummer för hemleveranser, så att kunden kan spåra paketet.
 alter table orders add column if not exists tracking_number text
   check (tracking_number ~ '^[A-Za-z0-9]{6,40}$');
--- Studentpaketet: 5 % rabatt per komplett paket (1 overall + 2 sprayfärger +
+-- Studentpaketet: 10 % rabatt per komplett paket (1 overall + 2 sprayfärger +
 -- 1 spritpennor) i vanliga beställningar. Dras av från totalen.
 alter table orders add column if not exists bundle_discount_sek integer not null default 0
   check (bundle_discount_sek >= 0);
@@ -406,7 +406,7 @@ begin
   end if;
 
   -- Kunden betalar fullt pris. discount_sek = det ni swishar tillbaka efteråt.
-  -- STUDENTPAKETET: 5 % på varje komplett paket (1 overall + 2 sprayfärger +
+  -- STUDENTPAKETET: 10 % på varje komplett paket (1 overall + 2 sprayfärger +
   -- 1 spritpennor). Bara vanliga beställningar – klasser har klasspris.
   -- Samma regel finns i src/shared/bundle.ts.
   if v_kind = 'privat' then
@@ -417,7 +417,7 @@ begin
       into v_bundles
       from order_items where order_id = v_order.id;
     if v_bundles > 0 then
-      select round(v_bundles * sum(case id when 'sprayfarg' then 2 else 1 end * price_sek) * 5 / 100.0)::integer
+      select round(v_bundles * sum(case id when 'sprayfarg' then 2 else 1 end * price_sek) * 10 / 100.0)::integer
         into v_bundle_discount
         from products where id in ('studentoverall', 'sprayfarg', 'spritpenna');
     end if;
