@@ -85,6 +85,7 @@ export function renderSummary(orders: readonly Order[]): void {
       'div',
       { class: 'summary-grid' },
       table('Per produkt', 'Produkt', s.byProduct),
+      table('Per leverans / skola', 'Leverans', s.byDelivery),
       table('Per kanal', 'Kanal', s.byChannel),
       table('Per storlek / färg', 'Storlek/färg', s.bySize),
       table('Per klass', 'Klass', s.byClass),

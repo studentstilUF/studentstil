@@ -1,5 +1,6 @@
 /** Räknar ut sammanställningen i adminpanelen. Ren logik utan DOM, så att den kan testas. */
 import { itemCount, type Order, type OrderItem } from '../../shared/apiTypes.ts';
+import { deliveryLabel } from '../../shared/delivery.ts';
 import { isPaid } from '../../shared/orderStatus.ts';
 import { sourceChannel } from '../../shared/source.ts';
 
@@ -17,6 +18,8 @@ export type Summary = {
   byProductSize: SummaryRow[];
   byClass: SummaryRow[];
   byChannel: SummaryRow[];
+  /** Hemleverans eller vilken skola paketen ska lämnas ut på. */
+  byDelivery: SummaryRow[];
   bySource: SummaryRow[];
 };
 
@@ -70,6 +73,7 @@ export function summarize(orders: readonly Order[]): Summary {
     byProductSize: groupItems(active, (item) => `${item.productName} – ${item.size}`),
     byClass: groupOrders(active, (o) => (o.schoolClass === '' ? '(raderad)' : o.schoolClass)),
     byChannel: groupOrders(active, (o) => sourceChannel(o.source)),
+    byDelivery: groupOrders(active, (o) => deliveryLabel(o)),
     bySource: groupOrders(active, (o) => o.source),
   };
 }
