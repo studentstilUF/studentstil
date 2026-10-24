@@ -169,7 +169,7 @@ function renderCart(): void {
             'p',
             { class: 'campaign-hint' },
             h('strong', {}, 'Kampanj: '),
-            'en återbetalning för en overall görs till de fem första beställningarna. Alla betalar fullt pris, och du är inte garanterad återbetalning – den gäller bara de fem första ordrarna. På orderbekräftelsen ser du om du är en av dem.',
+            'en återbetalning för en overall görs till de fem första beställningarna. Alla betalar fullt pris, och du är inte garanterad återbetalning – den gäller bara de fem första ordrarna. Vi kontaktar dig om du är en av dem.',
           )
         : null,
     ),
