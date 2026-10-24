@@ -308,8 +308,11 @@ declare
   v_bundles  integer := 0;
   v_bundle_discount integer := 0;
 begin
-  -- Hämtning på skola gäller bara klassbeställningar.
-  if v_delivery not in ('skola', 'hem') or (v_delivery = 'skola' and v_kind <> 'klass') then
+  -- Vanliga beställningar kan bara hämtas i skolcaféet på Elof (samma namn som
+  -- PICKUP_SCHOOL i src/shared/delivery.ts). Klassbeställningar valfri skola.
+  if v_delivery not in ('skola', 'hem')
+     or (v_delivery = 'skola' and v_kind <> 'klass'
+         and coalesce(p ->> 'school', '') <> 'Elof Lindälvs gymnasium') then
     raise exception 'INVALID_DELIVERY';
   end if;
 

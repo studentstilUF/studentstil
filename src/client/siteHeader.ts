@@ -51,6 +51,29 @@ function setupScrollToTop(): void {
   }
 }
 
+const ANNOUNCEMENT_KEY = 'studentstil-erbjudande-stangt';
+
+/** Krysset på erbjudanderaden döljer den, och valet minns i webbläsaren. */
+function setupAnnouncement(): void {
+  const bar = document.getElementById('announcement');
+  const close = document.getElementById('announcement-close');
+  if (bar === null || close === null) return;
+  try {
+    if (localStorage.getItem(ANNOUNCEMENT_KEY) === '1') bar.hidden = true;
+  } catch {
+    // Privat läge kan blockera localStorage – då visas raden som vanligt.
+  }
+  close.addEventListener('click', () => {
+    bar.hidden = true;
+    try {
+      localStorage.setItem(ANNOUNCEMENT_KEY, '1');
+    } catch {
+      // Inte sparat – raden visas igen på nästa sida.
+    }
+  });
+}
+
+setupAnnouncement();
 captureSource();
 render();
 onCartChange(render);

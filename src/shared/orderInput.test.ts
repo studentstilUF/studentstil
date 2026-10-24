@@ -85,14 +85,22 @@ describe('validateOrderInput', () => {
     expect(result.errors[field]).toMatch(message);
   });
 
-  it('tillåter inte hämtning på skola i en vanlig beställning', () => {
+  it('hämtning på skola i en vanlig beställning sker alltid på Elof', () => {
+    // Även med en annan skola och en adress utanför Kungsbacka.
+    const result = validateOrderInput({ ...valid, delivery: 'skola', school: 'Aranäsgymnasiet' });
+    expect(result.ok && result.data).toMatchObject({
+      delivery: 'skola',
+      school: 'Elof Lindälvs gymnasium',
+    });
+  });
+
+  it('sparar ingen skola vid hemleverans i en vanlig beställning', () => {
     const result = validateOrderInput({
       ...valid,
-      delivery: 'skola',
-      postalCode: '434 30',
-      school: 'Aranäsgymnasiet',
+      delivery: 'hem',
+      school: 'Elof Lindälvs gymnasium',
     });
-    expect(!result.ok && result.errors['delivery']).toMatch(/bara klassbeställningar/u);
+    expect(result.ok && result.data.school).toBe('');
   });
 
   it('skickar hem när leverans saknas', () => {

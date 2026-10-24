@@ -64,7 +64,8 @@ Gå igenom hela listan på den publicerade sajten (eller en deploy preview) **b�
 ## Kassan och validering
 
 - [ ] /paket/: välj storlek och två färger. Fyra rader hamnar i varukorgen, och kassan visar "Studentpaketet −10 %" (63 kr). Ordern i Supabase har samma rabatt.
-- [ ] Kassan har inget skolval, även med postnummer i Kungsbacka. Frakten är alltid 49 kr och läggs till i totalen.
+- [ ] Kassan: utan kryss i "Jag går på Elof Lindälvs gymnasium" är frakten 49 kr. Med kryss blir frakten Gratis, texten säger skolcaféet, och ordern visar "Hämtas i skolcaféet på Elof Lindälvs gymnasium".
+- [ ] Krysset på lanseringserbjudandet döljer raden, och den förblir dold på andra sidor.
 - [ ] Klassbeställning med postnummer utanför Kungsbacka: "Hämta på en skola i Kungsbacka" går inte att välja.
 - [ ] Klassbeställning med postnummer 434 30: skolvalet visas, listan med gymnasieskolor visas och frakten blir Gratis. Utan vald skola visas "Välj vilken skola …".
 - [ ] Skolan och frakten syns i orderbekräftelsen, mejlet, admin och CSV:n, och Swish-beloppet är varor + frakt.

@@ -5,7 +5,13 @@ import {
   type SwishStart,
   SwishStartSchema,
 } from '../../shared/apiTypes.ts';
-import { deliveryLabel, shippingLabel, statusLabel, trackingUrl } from '../../shared/delivery.ts';
+import {
+  deliveryLabel,
+  pickupPlace,
+  shippingLabel,
+  statusLabel,
+  trackingUrl,
+} from '../../shared/delivery.ts';
 import {
   formatDateTime,
   formatPostalCode,
@@ -38,7 +44,7 @@ const STATUS_TEXT: Record<OrderStatus, string> = {
 /** Statustexten, anpassad efter skolhämtning eller hemleverans. */
 function statusText(order: PublicOrder): string {
   if (order.delivery === 'skola' && order.status === 'skickad') {
-    return `Din beställning är klar att hämta på ${order.school ?? 'skolan'}. Ta med ordernumret.`;
+    return `Din beställning är klar att hämta i ${pickupPlace(order)}. Ta med ordernumret.`;
   }
   if (order.delivery === 'skola' && order.status === 'levererad') {
     return 'Du har hämtat din beställning. Grattis till studenten!';
@@ -327,7 +333,7 @@ function trackSteps(order: PublicOrder): TrackStep[] {
     { label: 'Beställning mottagen', hint: 'Väntar på din Swish-betalning.' },
     { label: 'Betalning bekräftad', hint: 'Vi packar din beställning.' },
     order.delivery === 'skola'
-      ? { label: 'Klar att hämta', hint: `Hämta på ${order.school ?? 'skolan'}.` }
+      ? { label: 'Klar att hämta', hint: `Hämta i ${pickupPlace(order)}.` }
       : { label: 'Skickad med PostNord', hint: 'Följ paketet med kollinumret.' },
   ];
 }

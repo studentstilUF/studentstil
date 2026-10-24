@@ -54,15 +54,27 @@ export function shippingFee(
   return Math.max(SHIPPING_FEE_SEK, CLASS_SHIPPING_PER_OVERALL_SEK * overalls);
 }
 
-/** "Hämtas på Aranäsgymnasiet", "Hemleverans" eller "Levereras till skolan" (klassbeställning). */
-export function deliveryLabel(order: {
-  kind: 'privat' | 'klass';
-  delivery: Delivery;
-  school: string | null;
-}): string {
+/**
+ * Vanliga beställningar kan hämtas gratis i skolcaféet på den här skolan
+ * (för elever där). Ändras skolan måste create_order i supabase/schema.sql
+ * ändras på samma sätt.
+ */
+export const PICKUP_SCHOOL = 'Elof Lindälvs gymnasium';
+
+type DeliveryInfo = { kind: 'privat' | 'klass'; delivery: Delivery; school: string | null };
+
+/** Var en skolhämtning lämnas ut, t.ex. "skolcaféet på Elof Lindälvs gymnasium". */
+export function pickupPlace(order: DeliveryInfo): string {
+  if (order.kind === 'privat') return `skolcaféet på ${order.school ?? PICKUP_SCHOOL}`;
+  return order.school ?? 'skolan';
+}
+
+/** "Hemleverans", "Hämtas i skolcaféet på …" eller "Levereras till …" (klassbeställning). */
+export function deliveryLabel(order: DeliveryInfo): string {
   if (order.delivery === 'hem') return 'Hemleverans';
-  const school = order.school ?? 'skolan';
-  return order.kind === 'klass' ? `Levereras till ${school}` : `Hämtas på ${school}`;
+  return order.kind === 'klass'
+    ? `Levereras till ${pickupPlace(order)}`
+    : `Hämtas i ${pickupPlace(order)}`;
 }
 
 /** "Gratis" eller t.ex. "49 kr". */

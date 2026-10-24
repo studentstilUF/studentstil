@@ -1,7 +1,7 @@
 /** Kassan (/kassa/): varukorgen och beställningsformuläret. */
 import { CreateOrderResponseSchema, type Product } from '../../shared/apiTypes.ts';
 import { bundleDiscount } from '../../shared/bundle.ts';
-import { SHIPPING_FEE_SEK } from '../../shared/delivery.ts';
+import { PICKUP_SCHOOL, SHIPPING_FEE_SEK } from '../../shared/delivery.ts';
 import { formatSek } from '../../shared/format.ts';
 import { type CartLine, MAX_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
 import { ApiError, apiPost } from '../api.ts';
@@ -45,6 +45,8 @@ const summary = byId('summary', HTMLDivElement);
 const errorBox = byId('form-errors', HTMLDivElement);
 const submitButton = byId('submit', HTMLButtonElement);
 const loading = byId('checkout-loading', HTMLParagraphElement);
+const schoolPickup = byId('schoolPickup', HTMLInputElement);
+const deliveryHint = byId('delivery-hint', HTMLParagraphElement);
 
 let products: Product[] = [];
 let submitting = false;
@@ -134,7 +136,10 @@ function renderCart(): void {
   cartEmpty.hidden = !empty;
   form.hidden = empty;
   cartList.replaceChildren(...lines.map(cartLine));
-  const shipping = SHIPPING_FEE_SEK;
+  const shipping = schoolPickup.checked ? 0 : SHIPPING_FEE_SEK;
+  deliveryHint.textContent = schoolPickup.checked
+    ? `Gratis – du hämtar din beställning i skolcaféet på ${PICKUP_SCHOOL}. Vi mejlar när den är klar att hämta.`
+    : 'Hemleverans 49 kr – skickas med PostNord inom 1–3 arbetsdagar.';
   const bundle = bundleDiscount(getCart(), products);
   summary.replaceChildren(
     ...nodes(
@@ -152,7 +157,12 @@ function renderCart(): void {
             h('span', {}, `−${formatSek(bundle)}`),
           )
         : null,
-      h('p', { class: 'order-line' }, h('span', {}, 'Frakt'), h('span', {}, formatSek(shipping))),
+      h(
+        'p',
+        { class: 'order-line' },
+        h('span', {}, 'Frakt'),
+        h('span', {}, shipping === 0 ? 'Gratis' : formatSek(shipping)),
+      ),
       h(
         'p',
         { class: 'order-total' },
@@ -191,7 +201,7 @@ function formValues(): Record<string, unknown> {
     street: text('street'),
     postalCode: text('postalCode'),
     city: text('city'),
-    delivery: 'hem',
+    delivery: schoolPickup.checked ? 'skola' : 'hem',
     phone: text('phone'),
     comment: text('comment'),
     acceptTerms: data.get('acceptTerms') === 'on',
@@ -312,6 +322,8 @@ async function init(): Promise<void> {
   loading.hidden = true;
   renderCart();
   onCartChange(renderCart);
+  // Elof-rutan: frakten och texten under ändras direkt.
+  schoolPickup.addEventListener('change', renderCart);
 
   form.addEventListener('focusout', onFieldEvent);
   form.addEventListener('change', onFieldEvent);

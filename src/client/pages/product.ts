@@ -235,7 +235,7 @@ function renderProduct(product: Product, products: readonly Product[]): void {
           'ul',
           { class: 'product-perks' },
           h('li', {}, 'Betala enkelt med Swish'),
-          h('li', {}, 'Klassbeställningar levereras gratis till skolor i Kungsbacka'),
+          h('li', {}, 'Går du på Elof? Hämta gratis i skolcaféet'),
           h('li', {}, '14 dagars ångerrätt'),
         ),
         ...nodes(

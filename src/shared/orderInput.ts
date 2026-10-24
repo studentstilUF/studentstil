@@ -10,7 +10,12 @@
  */
 import * as v from 'valibot';
 
-import { DeliverySchema, isKungsbackaPostalCode, KUNGSBACKA_SCHOOLS } from './delivery.ts';
+import {
+  DeliverySchema,
+  isKungsbackaPostalCode,
+  KUNGSBACKA_SCHOOLS,
+  PICKUP_SCHOOL,
+} from './delivery.ts';
 import { normalizeSource } from './source.ts';
 
 /** Tar bort osynliga styrtecken och onödiga mellanslag. */
@@ -179,15 +184,18 @@ export const OrderInputSchema = v.pipe(
     kind: v.optional(v.literal('privat'), 'privat'),
     items: privateItems,
     phone: optionalPhone,
-    /** Vanliga beställningar skickas alltid hem. Hämtning på skola gäller bara klassbeställningar. */
-    delivery: v.optional(
-      v.literal('hem', 'Hämtning på skola gäller bara klassbeställningar.'),
-      'hem',
-    ),
+    /**
+     * "hem" skickas med PostNord (49 kr). "skola" = eleven går på Elof och
+     * hämtar gratis i skolcaféet.
+     */
+    delivery: v.optional(DeliverySchema, 'hem'),
     ...commonFields,
   }),
-  // Ingen skola sparas på vanliga beställningar.
-  v.transform((input) => ({ ...input, school: '' })),
+  // Skolhämtning sker alltid på Elof, oavsett vad klienten skickar.
+  v.transform((input) => ({
+    ...input,
+    school: input.delivery === 'skola' ? PICKUP_SCHOOL : '',
+  })),
 );
 
 /** Klassbeställning från klassrepresentanten. */

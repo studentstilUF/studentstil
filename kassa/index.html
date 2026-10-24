@@ -84,7 +84,13 @@
                 <p id="city-error" class="field-error" hidden></p>
               </div>
             </div>
-            <p class="hint">Hemleverans 49 kr – skickas med PostNord inom 1–3 arbetsdagar.</p>
+            <div class="field pickup-choice">
+              <label class="checkbox">
+                <input id="schoolPickup" name="schoolPickup" type="checkbox" />
+                <span><strong>Jag går på Elof Lindälvs gymnasium</strong> – hämta gratis i skolcaféet i stället för hemleverans.</span>
+              </label>
+              <p id="delivery-hint" class="hint">Hemleverans 49 kr – skickas med PostNord inom 1–3 arbetsdagar.</p>
+            </div>
             <div class="field">
               <label for="comment">Övrig kommentar <span class="optional">(valfritt)</span></label>
               <textarea id="comment" name="comment" maxlength="500" aria-describedby="comment-error"></textarea>

@@ -1,6 +1,11 @@
 /** Texter för alla mejl. Ändra formuleringarna här. */
 import { itemCount, type Order } from '../../src/shared/apiTypes.ts';
-import { deliveryLabel, shippingLabel, trackingUrl } from '../../src/shared/delivery.ts';
+import {
+  deliveryLabel,
+  pickupPlace,
+  shippingLabel,
+  trackingUrl,
+} from '../../src/shared/delivery.ts';
 import { formatPostalCode, formatSek, formatSwishNumber } from '../../src/shared/format.ts';
 import type { Email } from './email.ts';
 import { siteUrl } from './env.ts';
@@ -127,15 +132,15 @@ export function paidEmail(order: Order): Email {
 
 export function shippedEmail(order: Order): Email {
   if (order.delivery === 'skola') {
-    const place = order.school ?? 'skolan';
+    const place = pickupPlace(order);
     return {
       to: order.email,
       subject: `Klar att hämta – ${order.orderNumber}`,
       html: layout(
         'Din beställning är klar att hämta',
-        `<p>Din beställning är packad och klar att hämta på <strong>${escapeHtml(place)}</strong>. Ta med ordernumret <strong>${escapeHtml(order.orderNumber)}</strong>.</p>${summaryHtml(order)}`,
+        `<p>Din beställning är packad och klar att hämta i <strong>${escapeHtml(place)}</strong>. Ta med ordernumret <strong>${escapeHtml(order.orderNumber)}</strong>.</p>${summaryHtml(order)}`,
       ),
-      text: `Din beställning är klar att hämta på ${place}. Ta med ordernumret ${order.orderNumber}.\n\n${summaryText(order)}\n\nStudentstil`,
+      text: `Din beställning är klar att hämta i ${place}. Ta med ordernumret ${order.orderNumber}.\n\n${summaryText(order)}\n\nStudentstil`,
     };
   }
   const tracking = order.trackingNumber === null ? null : trackingUrl(order.trackingNumber);
