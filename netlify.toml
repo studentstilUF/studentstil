@@ -8,6 +8,10 @@ publish = "dist"
 
 [build.environment]
 NODE_VERSION = "24"
+# Netlifys hemlighetsskanner: de här värdena är öppna (de står på sajten och i
+# README) och ska inte stoppa bygget. Nycklar, lösenordshash och SESSION_SECRET
+# skannas fortfarande.
+SECRETS_SCAN_OMIT_KEYS = "SHOP_EMAIL,SWISH_PAYEE,EMAIL_FROM,SWISH_MODE,SITE_URL,VITE_SITE_URL,SUPABASE_URL,DATA_RETENTION_MONTHS"
 
 [functions]
 node_bundler = "esbuild"
