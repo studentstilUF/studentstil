@@ -179,36 +179,15 @@ export const OrderInputSchema = v.pipe(
     kind: v.optional(v.literal('privat'), 'privat'),
     items: privateItems,
     phone: optionalPhone,
-    /** Hämta på en skola i Kungsbacka (gratis) eller få paketet hemskickat (frakt). */
-    delivery: DeliverySchema,
-    /** Skolan där paketet hämtas (bara när delivery är "skola"). */
-    school: v.pipe(
-      v.optional(v.string(), ''),
-      v.transform((s: string) => cleanLine(s)),
+    /** Vanliga beställningar skickas alltid hem. Hämtning på skola gäller bara klassbeställningar. */
+    delivery: v.optional(
+      v.literal('hem', 'Hämtning på skola gäller bara klassbeställningar.'),
+      'hem',
     ),
     ...commonFields,
   }),
-  // Hämtning på skola: kräver postnummer i Kungsbacka och en skola från listan.
-  v.forward(
-    v.partialCheck(
-      [['delivery'], ['postalCode']],
-      (input) => input.delivery !== 'skola' || isKungsbackaPostalCode(input.postalCode),
-      'Hämtning på skola gäller bara adresser i Kungsbacka. Välj hemleverans i stället.',
-    ),
-    ['delivery'],
-  ),
-  v.forward(
-    v.partialCheck(
-      [['delivery'], ['school']],
-      (input) =>
-        input.delivery !== 'skola' ||
-        (KUNGSBACKA_SCHOOLS as readonly string[]).includes(input.school),
-      'Välj vilken skola du vill hämta paketet på.',
-    ),
-    ['school'],
-  ),
-  // Skolan sparas bara när paketet ska hämtas där.
-  v.transform((input) => (input.delivery === 'skola' ? input : { ...input, school: '' })),
+  // Ingen skola sparas på vanliga beställningar.
+  v.transform((input) => ({ ...input, school: '' })),
 );
 
 /** Klassbeställning från klassrepresentanten. */
@@ -270,7 +249,7 @@ export function validateOrderInput(input: unknown): ValidationResult {
   const base = typeof input === 'object' && input !== null ? input : {};
   const withDefaults = isClassOrder(base)
     ? { ...EMPTY_FORM, school: '', delivery: '', ...base }
-    : { ...EMPTY_FORM, delivery: '', ...base };
+    : { ...EMPTY_FORM, ...base };
   const result = isClassOrder(base)
     ? v.safeParse(ClassOrderInputSchema, withDefaults)
     : v.safeParse(OrderInputSchema, withDefaults);

@@ -1,13 +1,12 @@
 /** Kassan (/kassa/): varukorgen och beställningsformuläret. */
 import { CreateOrderResponseSchema, type Product } from '../../shared/apiTypes.ts';
 import { bundleDiscount } from '../../shared/bundle.ts';
-import { shippingFee } from '../../shared/delivery.ts';
+import { SHIPPING_FEE_SEK } from '../../shared/delivery.ts';
 import { formatSek } from '../../shared/format.ts';
 import { type CartLine, MAX_QUANTITY, validateOrderInput } from '../../shared/orderInput.ts';
 import { ApiError, apiPost } from '../api.ts';
 import { clearCart, getCart, onCartChange, removeFromCart, setQuantity } from '../cart.ts';
 import { colorSwatch } from '../colorSwatch.ts';
-import { type DeliveryChoice, deliveryChoice } from '../deliveryChoice.ts';
 import { byId, h, nodes } from '../dom.ts';
 import { fetchProducts, hasVariantChoice } from '../products.ts';
 import { currentSource } from '../source.ts';
@@ -20,8 +19,6 @@ const FIELDS = [
   'street',
   'postalCode',
   'city',
-  'delivery',
-  'school',
   'phone',
   'comment',
   'acceptTerms',
@@ -36,8 +33,6 @@ const FIELD_LABELS: Record<Field, string> = {
   street: 'Gatuadress',
   postalCode: 'Postnummer',
   city: 'Ort',
-  delivery: 'Leverans',
-  school: 'Skola',
   phone: 'Mobilnummer',
   comment: 'Kommentar',
   acceptTerms: 'Godkännande',
@@ -50,9 +45,6 @@ const summary = byId('summary', HTMLDivElement);
 const errorBox = byId('form-errors', HTMLDivElement);
 const submitButton = byId('submit', HTMLButtonElement);
 const loading = byId('checkout-loading', HTMLParagraphElement);
-const postalInput = byId('postalCode', HTMLInputElement);
-const deliveryContainer = byId('delivery-choice', HTMLDivElement);
-let delivery: DeliveryChoice | null = null;
 
 let products: Product[] = [];
 let submitting = false;
@@ -142,8 +134,7 @@ function renderCart(): void {
   cartEmpty.hidden = !empty;
   form.hidden = empty;
   cartList.replaceChildren(...lines.map(cartLine));
-  const chosen = delivery?.selected() ?? null;
-  const shipping = chosen === null ? 0 : shippingFee(chosen);
+  const shipping = SHIPPING_FEE_SEK;
   const bundle = bundleDiscount(getCart(), products);
   summary.replaceChildren(
     ...nodes(
@@ -161,16 +152,7 @@ function renderCart(): void {
             h('span', {}, `−${formatSek(bundle)}`),
           )
         : null,
-      h(
-        'p',
-        { class: 'order-line' },
-        h('span', {}, 'Frakt'),
-        h(
-          'span',
-          {},
-          chosen === null ? 'Välj leverans' : shipping === 0 ? 'Gratis' : formatSek(shipping),
-        ),
-      ),
+      h('p', { class: 'order-line' }, h('span', {}, 'Frakt'), h('span', {}, formatSek(shipping))),
       h(
         'p',
         { class: 'order-total' },
@@ -209,8 +191,7 @@ function formValues(): Record<string, unknown> {
     street: text('street'),
     postalCode: text('postalCode'),
     city: text('city'),
-    delivery: delivery?.selected() ?? '',
-    school: delivery?.school() ?? '',
+    delivery: 'hem',
     phone: text('phone'),
     comment: text('comment'),
     acceptTerms: data.get('acceptTerms') === 'on',
@@ -332,12 +313,6 @@ async function init(): Promise<void> {
   renderCart();
   onCartChange(renderCart);
 
-  delivery = deliveryChoice({
-    container: deliveryContainer,
-    postalInput,
-    homeText: 'Vi skickar paketet till adressen ovan.',
-    onChange: renderCart,
-  });
   form.addEventListener('focusout', onFieldEvent);
   form.addEventListener('change', onFieldEvent);
   form.addEventListener('submit', (event) => {

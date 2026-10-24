@@ -85,18 +85,19 @@ describe('validateOrderInput', () => {
     expect(result.errors[field]).toMatch(message);
   });
 
-  it('tillåter hämtning på skola bara i Kungsbacka', () => {
-    const outside = validateOrderInput({ ...valid, delivery: 'skola', school: 'Aranäsgymnasiet' });
-    expect(!outside.ok && outside.errors['delivery']).toMatch(/bara adresser i Kungsbacka/u);
-    const noSchool = validateOrderInput({ ...valid, delivery: 'skola', postalCode: '434 30' });
-    expect(!noSchool.ok && noSchool.errors['school']).toMatch(/Välj vilken skola/u);
-    const ok = validateOrderInput({
+  it('tillåter inte hämtning på skola i en vanlig beställning', () => {
+    const result = validateOrderInput({
       ...valid,
       delivery: 'skola',
       postalCode: '434 30',
       school: 'Aranäsgymnasiet',
     });
-    expect(ok.ok).toBe(true);
+    expect(!result.ok && result.errors['delivery']).toMatch(/bara klassbeställningar/u);
+  });
+
+  it('skickar hem när leverans saknas', () => {
+    const result = validateOrderInput({ ...valid, delivery: undefined });
+    expect(result.ok && result.data.delivery).toBe('hem');
   });
 
   it('kräver att kryssrutan är ikryssad', () => {
@@ -167,18 +168,8 @@ describe('kryphål: manipulerade beställningar', () => {
     expect(validateOrderInput({ ...valid, delivery: 'gratis' }).ok).toBe(false);
   });
 
-  it('sparar ingen skola vid hemleverans', () => {
+  it('sparar ingen skola i en vanlig beställning', () => {
     const result = validateOrderInput({ ...valid, delivery: 'hem', school: 'Aranäsgymnasiet' });
     expect(result.ok && result.data.school).toBe('');
-  });
-
-  it('avvisar hämtning på en skola som inte finns i listan', () => {
-    const result = validateOrderInput({
-      ...valid,
-      delivery: 'skola',
-      postalCode: '434 30',
-      school: 'Påhittade gymnasiet',
-    });
-    expect(!result.ok && result.errors['school']).toMatch(/Välj vilken skola/u);
   });
 });

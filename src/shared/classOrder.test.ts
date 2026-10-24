@@ -81,4 +81,25 @@ describe('validateOrderInput för klassbeställning', () => {
     if (result.ok) return;
     expect(result.errors['items']).toMatch(/klassbeställning/u);
   });
+
+  it('tillåter leverans till skola bara i Kungsbacka', () => {
+    const outside = validateOrderInput({
+      ...valid,
+      delivery: 'skola',
+      school: 'Aranäsgymnasiet',
+      postalCode: '123 45',
+    });
+    expect(!outside.ok && outside.errors['delivery']).toMatch(/bara adresser i Kungsbacka/u);
+    const ok = validateOrderInput({ ...valid, delivery: 'skola', school: 'Aranäsgymnasiet' });
+    expect(ok.ok).toBe(true);
+  });
+
+  it('avvisar leverans till en skola som inte finns i listan', () => {
+    const result = validateOrderInput({
+      ...valid,
+      delivery: 'skola',
+      school: 'Påhittade gymnasiet',
+    });
+    expect(!result.ok && result.errors['school']).toMatch(/Välj vilken skola/u);
+  });
 });

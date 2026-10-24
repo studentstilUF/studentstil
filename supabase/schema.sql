@@ -279,7 +279,8 @@ $$;
 -- klasspris (products.bulk_price_sek) på alla varor som har ett sådant.
 -- Gränsen 25 finns även i src/shared/classOrder.ts – ändra på båda ställena.
 --
--- FRAKT: p.delivery = 'skola' (gratis, hämtas på skolan i p.school) eller 'hem'
+-- FRAKT: p.delivery = 'skola' (bara klassbeställningar: gratis, levereras till skolan
+-- i p.school) eller 'hem'
 -- (49 kr, klassbeställningar 25 kr per overall men minst 49 kr).
 -- Fraktpriset finns även i src/shared/delivery.ts – ändra på båda ställena.
 -- ---------------------------------------------------------------------
@@ -307,7 +308,8 @@ declare
   v_bundles  integer := 0;
   v_bundle_discount integer := 0;
 begin
-  if v_delivery not in ('skola', 'hem') then
+  -- Hämtning på skola gäller bara klassbeställningar.
+  if v_delivery not in ('skola', 'hem') or (v_delivery = 'skola' and v_kind <> 'klass') then
     raise exception 'INVALID_DELIVERY';
   end if;
 

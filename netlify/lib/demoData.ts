@@ -4,7 +4,7 @@
  * kunduppgifter kan synas när man är inloggad som demo.
  */
 import type { Order, OrderItem } from '../../src/shared/apiTypes.ts';
-import { KUNGSBACKA_SCHOOLS, SHIPPING_FEE_SEK } from '../../src/shared/delivery.ts';
+import { SHIPPING_FEE_SEK } from '../../src/shared/delivery.ts';
 import type { OrderStatus } from '../../src/shared/orderStatus.ts';
 
 const FIRST_NAMES = [
@@ -108,9 +108,8 @@ export function demoOrders(count = 48): Order[] {
       start + i * 26 * 60 * 60 * 1000 + Math.floor(random() * 3_600_000),
     ).toISOString();
     const paid = status !== 'vantar_betalning' && status !== 'avbruten';
-    // Ungefär hälften hämtar på en skola i Kungsbacka (gratis), resten får det hemskickat.
-    const atSchool = random() < 0.5;
-    const shippingSek = atSchool ? 0 : SHIPPING_FEE_SEK;
+    // Vanliga beställningar skickas alltid hem (skolhämtning gäller bara klasser).
+    const shippingSek = SHIPPING_FEE_SEK;
     // Kampanj: de 5 första beställningarna med en overall fick en overall gratis.
     const overall = items.find((item) => item.productId === 'studentoverall');
     const discountSek = i <= 5 && overall !== undefined ? overall.unitPriceSek : 0;
@@ -125,21 +124,19 @@ export function demoOrders(count = 48): Order[] {
         .replace(/ö/gu, 'o')}@example.com`,
       schoolClass: pick(CLASSES, random),
       street: `Exempelgatan ${String(1 + Math.floor(random() * 80))}`,
-      postalCode: atSchool ? '43430' : `1${String(Math.floor(random() * 9000) + 1000)}`,
-      city: atSchool ? 'Kungsbacka' : pick(CITIES, random),
+      postalCode: `1${String(Math.floor(random() * 9000) + 1000)}`,
+      city: pick(CITIES, random),
       phone: random() < 0.5 ? null : `070000${String(Math.floor(random() * 9000) + 1000)}`,
       comment: random() < 0.15 ? 'Demo: detta är en påhittad kommentar.' : null,
       kind: 'privat',
-      school: atSchool ? pick(KUNGSBACKA_SCHOOLS, random) : null,
-      delivery: atSchool ? 'skola' : 'hem',
+      school: null,
+      delivery: 'hem',
       shippingSek,
       discountSek,
       bundleDiscountSek: 0,
       campaign: discountSek > 0 ? 'gratis-overall' : null,
       trackingNumber:
-        !atSchool && (status === 'skickad' || status === 'levererad')
-          ? `0012345678${String(1000 + i)}`
-          : null,
+        status === 'skickad' || status === 'levererad' ? `0012345678${String(1000 + i)}` : null,
       items,
       totalSek: items.reduce((sum, item) => sum + item.lineTotalSek, 0) + shippingSek,
       source: pick(SOURCES, random),
