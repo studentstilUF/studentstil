@@ -2,11 +2,16 @@ import type { Order, OrderItem } from '../../shared/apiTypes.ts';
 /** Orderlistan i adminpanelen: sök, filter, sortering, statusändring och CSV-export. */
 import { campaignShortLabel } from '../../shared/campaign.ts';
 import { toCsv } from '../../shared/csv.ts';
-import { deliveryLabel, statusLabel } from '../../shared/delivery.ts';
+import { deliveryLabel, statusLabel, trackingUrl } from '../../shared/delivery.ts';
 import { formatDateTime, formatPostalCode, formatSek } from '../../shared/format.ts';
-import { ORDER_STATUSES, type OrderStatus, STATUS_LABELS } from '../../shared/orderStatus.ts';
+import {
+  ORDER_STATUSES,
+  type OrderStatus,
+  SELECTABLE_STATUSES,
+  STATUS_LABELS,
+} from '../../shared/orderStatus.ts';
 import { sourceChannel } from '../../shared/source.ts';
-import { byId, downloadBlob, h } from '../dom.ts';
+import { byId, downloadBlob, h, nodes } from '../dom.ts';
 import { printOrders } from './printOrders.ts';
 
 type SortKey =
@@ -63,7 +68,20 @@ function trackingForm(order: Order): HTMLFormElement | null {
     class: 'tracking-input',
   });
   const save = h('button', { type: 'submit', class: 'link-button small' }, 'Spara');
-  const form = h('form', { class: 'tracking-form' }, input, save);
+  const link =
+    order.trackingNumber === null
+      ? null
+      : h(
+          'a',
+          {
+            href: trackingUrl(order.trackingNumber),
+            target: '_blank',
+            rel: 'noopener',
+            class: 'small',
+          },
+          'Spåra hos PostNord',
+        );
+  const form = h('form', { class: 'tracking-form' }, input, save, ...nodes(link));
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     save.disabled = true;
@@ -107,7 +125,7 @@ function fillFilters(): void {
   fillSelect(
     statusFilter,
     'Alla statusar',
-    ORDER_STATUSES.map((s) => [s, STATUS_LABELS[s]] as const),
+    SELECTABLE_STATUSES.map((s) => [s, STATUS_LABELS[s]] as const),
   );
   fillSelect(
     classFilter,
@@ -186,7 +204,10 @@ function statusSelect(order: Order): HTMLSelectElement {
       'data-status': order.status,
       class: 'status-select',
     },
-    ...ORDER_STATUSES.map((s) =>
+    // En gammal order kan ha "Packad" eller "Levererad": visa den, men erbjud den inte annars.
+    ...ORDER_STATUSES.filter(
+      (s) => (SELECTABLE_STATUSES as readonly OrderStatus[]).includes(s) || s === order.status,
+    ).map((s) =>
       h('option', { value: s, selected: s === order.status }, statusLabel(s, order.delivery)),
     ),
   );

@@ -144,9 +144,9 @@ export function shippedEmail(order: Order): Email {
     subject: `Din beställning är på väg – ${order.orderNumber}`,
     html: layout(
       'Din beställning är på väg',
-      `<p>Nu har vi skickat din beställning med PostNord. Grattis till studenten!</p>${tracking === null ? '' : button(tracking, 'Spåra paketet hos PostNord')}${summaryHtml(order)}`,
+      `<p>Nu har vi skickat din beställning med PostNord. Grattis till studenten!</p>${tracking === null || order.trackingNumber === null ? '' : `<p>Kollinummer: <a href="${escapeHtml(tracking)}"><strong>${escapeHtml(order.trackingNumber)}</strong></a></p>${button(tracking, 'Spåra paketet hos PostNord')}`}${summaryHtml(order)}`,
     ),
-    text: `Din beställning är på väg med PostNord. Grattis till studenten!${tracking === null ? '' : `\n\nSpåra paketet: ${tracking}`}\n\n${summaryText(order)}\n\nStudentstil`,
+    text: `Din beställning är på väg med PostNord. Grattis till studenten!${tracking === null || order.trackingNumber === null ? '' : `\n\nKollinummer: ${order.trackingNumber}\nSpåra paketet: ${tracking}`}\n\n${summaryText(order)}\n\nStudentstil`,
   };
 }
 

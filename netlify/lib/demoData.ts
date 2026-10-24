@@ -52,10 +52,10 @@ const STATUSES: readonly OrderStatus[] = [
   'vantar_betalning',
   'betald',
   'betald',
-  'packad',
+  'betald',
   'skickad',
-  'levererad',
-  'levererad',
+  'skickad',
+  'skickad',
   'avbruten',
 ];
 

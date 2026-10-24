@@ -8,7 +8,7 @@
 import type { Config } from '@netlify/functions';
 import * as v from 'valibot';
 
-import { type AdminOrdersResponse, StatusSchema } from '../../src/shared/apiTypes.ts';
+import { type AdminOrdersResponse, SelectableStatusSchema } from '../../src/shared/apiTypes.ts';
 import { demoOrders } from '../lib/demoData.ts';
 import {
   HttpError,
@@ -24,7 +24,7 @@ import { requireSession } from '../lib/session.ts';
 
 const StatusBodySchema = v.object({
   orderNumber: v.pipe(v.string(), v.regex(/^SS-\d{4}-\d{4,}$/u)),
-  status: StatusSchema,
+  status: SelectableStatusSchema,
 });
 
 const TrackingBodySchema = v.object({

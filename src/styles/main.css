@@ -1752,8 +1752,35 @@ textarea:focus {
   background: var(--text);
 }
 
-.order-track li[data-state='current'] {
+.order-track li[data-state='current'],
+.order-track li[aria-current='step'] {
   font-weight: 600;
+}
+
+.track-step {
+  margin: 0 0 12px;
+}
+
+.track-text {
+  display: grid;
+  gap: 2px;
+}
+
+.track-hint {
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.tracking-box {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  margin: 16px 0;
+}
+
+.tracking-box p {
+  margin: 0;
 }
 
 .order-track li[data-state='current']::before {

@@ -7,9 +7,11 @@ import * as v from 'valibot';
 
 import { CampaignSchema } from './campaign.ts';
 import { DeliverySchema } from './delivery.ts';
-import { ORDER_STATUSES } from './orderStatus.ts';
+import { ORDER_STATUSES, SELECTABLE_STATUSES } from './orderStatus.ts';
 
 export const StatusSchema = v.picklist(ORDER_STATUSES);
+/** Statusar som admin får sätta (se SELECTABLE_STATUSES). */
+export const SelectableStatusSchema = v.picklist(SELECTABLE_STATUSES);
 
 export const OrderKindSchema = v.picklist(['privat', 'klass']);
 export type OrderKind = v.InferOutput<typeof OrderKindSchema>;

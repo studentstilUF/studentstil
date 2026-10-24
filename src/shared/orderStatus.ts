@@ -10,6 +10,17 @@ export const ORDER_STATUSES = [
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
+/**
+ * Statusar som går att välja i admin. "Packad" och "Levererad" används inte
+ * längre men finns kvar i databasen så att gamla ordrar fortfarande kan läsas.
+ */
+export const SELECTABLE_STATUSES = [
+  'vantar_betalning',
+  'betald',
+  'skickad',
+  'avbruten',
+] as const satisfies readonly OrderStatus[];
+
 export const STATUS_LABELS: Readonly<Record<OrderStatus, string>> = {
   vantar_betalning: 'Väntar på betalning',
   betald: 'Betald',

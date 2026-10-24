@@ -72,7 +72,7 @@ export function renderSummary(orders: readonly Order[]): void {
     h(
       'div',
       { class: 'stats' },
-      stat('Betald försäljning', formatSek(s.paidAmount), 'Betald, packad, skickad och levererad'),
+      stat('Betald försäljning', formatSek(s.paidAmount), 'Betald och skickad'),
       stat('Väntar på betalning', formatSek(s.unpaidAmount)),
       stat(
         'Ordrar',

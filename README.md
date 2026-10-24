@@ -59,7 +59,7 @@ Innan lansering: gå igenom [TESTLISTA.md](TESTLISTA.md).
    - **Mobil:** knappen är en direktlänk till Swish-appen. Ett tryck öppnar appen med belopp, ert nummer och ordernumret ifyllt.
    - **Dator:** en QR-kod visas som kunden skannar med Swish-appen.
 5. Ni ser betalningen i Swish-appen och sätter ordern till **Betald** i adminpanelen. Kunden får då ett mejl. Med Swish Handel (läge B) sker det här steget automatiskt.
-6. Ni packar och skickar: **Packad**, sedan **Skickad** (kunden får mejl), sedan **Levererad**.
+6. Ni packar och skickar: sätt **Skickad** (vid skolhämtning heter den **Klar att hämta**) och fyll i PostNords kollinummer. Kunden får mejl med en klickbar spårningslänk.
 
 ---
 
@@ -312,7 +312,7 @@ Netlify skaffar ett gratis certifikat från Let's Encrypt automatiskt när DNS p
 4. `EMAIL_FROM` måste vara en adress på den verifierade domänen, t.ex. `Studentstil <order@studentstil.se>`. Den adressen behöver inte ha någon inkorg. Svarar en kund på ett mejl hamnar svaret hos `SHOP_EMAIL` (studentstilkungsbacka@gmail.com). En Gmail-adress kan **inte** vara avsändare via Resend, eftersom Resend bara skickar från domäner ni själva äger.
 
 Mejl som skickas:
-- **"Orderbekräftelse … – väntar på betalning"** direkt när ordern skapas, med sammanfattning, Swish-länk och knappen **Följ din order**. Det står inget tack än, eftersom kunden inte har betalat. Orderbekräftelsesidan visar stegen Beställning mottagen → Betalning bekräftad → Packad → Skickad → Levererad och uppdateras automatiskt när ni ändrar status i admin.
+- **"Orderbekräftelse … – väntar på betalning"** direkt när ordern skapas, med sammanfattning, Swish-länk och knappen **Följ din order**. Det står inget tack än, eftersom kunden inte har betalat. Orderbekräftelsesidan visar stegen Steg 1–3: Beställning mottagen → Betalning bekräftad → Skickad med PostNord (eller Klar att hämta), med kollinumret som länk till PostNords spårning och uppdateras automatiskt när ni ändrar status i admin.
 - notis till `SHOP_EMAIL` om den nya ordern
 - **"Tack för din beställning"** när ordern blir **Betald**
 - **"På väg"** när ordern blir **Skickad** Texterna finns i `netlify/lib/emailTemplates.ts`.

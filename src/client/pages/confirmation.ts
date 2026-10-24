@@ -26,8 +26,10 @@ const returnedFromSwish = params.has('swish');
 const STATUS_TEXT: Record<OrderStatus, string> = {
   vantar_betalning:
     'Din order behandlas först när vi har bekräftat att betalningen har kommit in till oss. Vi stämmer av inkomna Swish-betalningar manuellt, oftast inom ett dygn, och den här sidan uppdateras automatiskt när betalningen är registrerad. Du får även en bekräftelse via e-post.',
-  betald: 'Tack! Vi har tagit emot din betalning och börjar packa din beställning.',
-  packad: 'Din beställning är packad och skickas inom kort.',
+  betald:
+    'Tack! Vi har tagit emot din betalning. Nu packar vi din beställning och skickar den inom 1–3 arbetsdagar.',
+  packad:
+    'Tack! Vi har tagit emot din betalning. Nu packar vi din beställning och skickar den inom 1–3 arbetsdagar.',
   skickad: 'Din beställning är skickad med PostNord. Grattis till studenten!',
   levererad: 'Din beställning är levererad. Grattis till studenten!',
   avbruten: 'Beställningen är avbruten. Kontakta oss om du har frågor.',
@@ -41,11 +43,16 @@ function statusText(order: PublicOrder): string {
   if (order.delivery === 'skola' && order.status === 'levererad') {
     return 'Du har hämtat din beställning. Grattis till studenten!';
   }
+  if (order.status === 'skickad' && order.trackingNumber === null) {
+    return 'Din beställning är skickad med PostNord. Kollinumret för spårning dyker upp här så snart vi har registrerat det.';
+  }
   return STATUS_TEXT[order.status];
 }
 
 let pollTimer: number | undefined;
 let pollCount = 0;
+/** Kollinumret som visas just nu, så att sidan ritas om när det läggs till. */
+let shownTrackingNumber: string | null = null;
 
 function orderStatusUrl(): string {
   return `/api/order-status?nr=${encodeURIComponent(orderNumber)}&t=${encodeURIComponent(token)}`;
@@ -77,10 +84,12 @@ function details(order: PublicOrder): HTMLElement {
       : []),
     ['Att betala', formatSek(order.totalSek)],
   ];
+  const tracking: [string, Node][] =
+    order.trackingNumber === null ? [] : [['Kollinummer', trackingLink(order.trackingNumber)]];
   return h(
     'dl',
     { class: 'details-list' },
-    ...rows.flatMap(([label, value]) => [h('dt', {}, label), h('dd', {}, value)]),
+    ...[...rows, ...tracking].flatMap(([label, value]) => [h('dt', {}, label), h('dd', {}, value)]),
   );
 }
 
@@ -307,33 +316,53 @@ function paymentSection(order: PublicOrder): HTMLElement {
   );
 }
 
+type TrackStep = { label: string; hint: string };
+
 /**
- * Stegen i "Följ din order". Skolhämtning slutar med "Hämtad" (ni lämnar ut
- * paketet själva). Hemleverans slutar med "Skickad" – därefter visar
- * PostNords spårning var paketet är.
+ * Stegen i "Följ din order": beställd, betald och skickad (eller klar att
+ * hämta). Därefter visar PostNords spårning var paketet är.
  */
-function trackSteps(order: PublicOrder): { status: OrderStatus; label: string }[] {
-  const steps: { status: OrderStatus; label: string }[] = [
-    { status: 'vantar_betalning', label: 'Beställning mottagen' },
-    { status: 'betald', label: 'Betalning bekräftad' },
-    { status: 'packad', label: 'Packad' },
-    { status: 'skickad', label: statusLabel('skickad', order.delivery) },
+function trackSteps(order: PublicOrder): TrackStep[] {
+  return [
+    { label: 'Beställning mottagen', hint: 'Väntar på din Swish-betalning.' },
+    { label: 'Betalning bekräftad', hint: 'Vi packar din beställning.' },
+    order.delivery === 'skola'
+      ? { label: 'Klar att hämta', hint: `Hämta på ${order.school ?? 'skolan'}.` }
+      : { label: 'Skickad med PostNord', hint: 'Följ paketet med kollinumret.' },
   ];
-  if (order.delivery === 'skola') steps.push({ status: 'levererad', label: 'Hämtad' });
-  return steps;
+}
+
+/** Vilket steg ordern är på (0–2). Gamla statusar räknas till närmaste steg. */
+function stepIndex(status: OrderStatus): number {
+  if (status === 'vantar_betalning') return 0;
+  if (status === 'betald' || status === 'packad') return 1;
+  return 2;
+}
+
+/** Kollinumret som en länk till PostNords spårning. */
+function trackingLink(trackingNumber: string): HTMLAnchorElement {
+  return h(
+    'a',
+    { href: trackingUrl(trackingNumber), target: '_blank', rel: 'noopener' },
+    trackingNumber,
+  );
 }
 
 /** "Följ din order": vilka steg som är klara och vilket som är aktuellt. */
 function tracker(order: PublicOrder): HTMLElement | null {
   if (order.status === 'avbruten') return null;
   const steps = trackSteps(order);
-  const found = steps.findIndex((step) => step.status === order.status);
-  // "Levererad" vid hemleverans finns inte som steg: då är alla steg klara.
-  const current = found === -1 ? steps.length : found;
+  const current = stepIndex(order.status);
   return h(
     'section',
     { class: 'section', 'aria-labelledby': 'track-heading' },
     h('h2', { id: 'track-heading' }, 'Följ din order'),
+    h(
+      'p',
+      { class: 'track-step' },
+      `Steg ${String(current + 1)} av ${String(steps.length)}: `,
+      h('strong', {}, steps[current]?.label ?? ''),
+    ),
     h(
       'ol',
       { class: 'order-track' },
@@ -341,18 +370,35 @@ function tracker(order: PublicOrder): HTMLElement | null {
         h(
           'li',
           {
-            'data-state': i < current ? 'done' : i === current ? 'current' : 'todo',
+            // Sista steget är klart (fylld punkt) när ordern väl har nått dit.
+            'data-state':
+              i < current || (i === current && i === steps.length - 1)
+                ? 'done'
+                : i === current
+                  ? 'current'
+                  : 'todo',
             'aria-current': i === current ? 'step' : false,
           },
-          step.label,
+          h(
+            'span',
+            { class: 'track-text' },
+            h('span', {}, step.label),
+            i === current ? h('span', { class: 'track-hint' }, step.hint) : null,
+          ),
         ),
       ),
     ),
     order.trackingNumber === null
       ? null
       : h(
-          'p',
-          {},
+          'div',
+          { class: 'tracking-box' },
+          h(
+            'p',
+            {},
+            'Kollinummer (PostNord): ',
+            h('strong', {}, trackingLink(order.trackingNumber)),
+          ),
           h(
             'a',
             {
@@ -381,6 +427,7 @@ function heading(order: PublicOrder): string {
 
 function render(order: PublicOrder): void {
   const unpaid = order.status === 'vantar_betalning';
+  shownTrackingNumber = order.trackingNumber;
   document.title = `${unpaid ? 'Betala' : 'Order'} ${order.orderNumber} – Studentstil`;
   container.replaceChildren(
     ...nodes(
@@ -427,8 +474,12 @@ function schedulePoll(currentStatus: OrderStatus, delayMs: number): void {
 }
 
 /** Ordern är klar och ändras inte mer – då behöver sidan inte fråga igen. */
-function isFinal(status: OrderStatus): boolean {
-  return status === 'levererad' || status === 'avbruten';
+function isFinal(order: PublicOrder): boolean {
+  if (order.status === 'levererad' || order.status === 'avbruten') return true;
+  // Skickad: fortsätt fråga tills kollinumret finns (gäller inte skolhämtning).
+  return (
+    order.status === 'skickad' && (order.delivery === 'skola' || order.trackingNumber !== null)
+  );
 }
 
 /** Hur ofta sidan frågar om ny status. Swish Handel bekräftar på sekunder. */
@@ -450,9 +501,9 @@ async function poll(currentStatus: OrderStatus, delayMs: number): Promise<void> 
   }
   try {
     const order = await apiGet(orderStatusUrl(), PublicOrderSchema);
-    if (order.status !== currentStatus) {
+    if (order.status !== currentStatus || order.trackingNumber !== shownTrackingNumber) {
       render(order);
-      if (!isFinal(order.status)) schedulePoll(order.status, pollDelay(order));
+      if (!isFinal(order)) schedulePoll(order.status, pollDelay(order));
       return;
     }
   } catch {
@@ -465,7 +516,7 @@ async function init(): Promise<void> {
   try {
     const order = await apiGet(orderStatusUrl(), PublicOrderSchema);
     render(order);
-    if (!isFinal(order.status)) schedulePoll(order.status, pollDelay(order));
+    if (!isFinal(order)) schedulePoll(order.status, pollDelay(order));
   } catch (error) {
     container.replaceChildren(
       h('h1', {}, 'Beställningen hittades inte'),
