@@ -97,10 +97,10 @@ describe('summarize', () => {
 
 describe('posterTarget', () => {
   it('bygger länk och källa för en plats', () => {
-    expect(posterTarget('Mässa')).toEqual({
-      source: 'qr-massa',
-      url: 'https://studentstil.se/bestall/?kalla=qr-massa',
-    });
+    // Domänen styrs av VITE_SITE_URL vid bygget, så bara sökvägen kontrolleras.
+    const target = posterTarget('Mässa');
+    expect(target.source).toBe('qr-massa');
+    expect(target.url).toMatch(/^https:\/\/[^/]+\/bestall\/\?kalla=qr-massa$/u);
     expect(posterTarget('').source).toBe('qr');
   });
 });
