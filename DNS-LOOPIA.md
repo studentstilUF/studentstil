@@ -27,15 +27,17 @@ Tryck sedan **I've added the records** i Resend.
 
 ## 3. E-post (Resend), steg 2: avsändarposter
 
-Resend visar dessa först när steg 2 är verifierat. DKIM-nyckeln (`resend._domainkey`)
-är unik för kontot. Kopiera den exakt från Resend → Domains → studentstil.se.
+Ägarbeviset i steg 2 är klart (2026-10-24). Lägg nu in de här posterna. DKIM-nyckeln
+(`resend._domainkey`) är unik för kontot och måste kopieras exakt, på en rad.
 
 | Värdnamn | Typ | Värde |
 |---|---|---|
-| `resend._domainkey` | TXT | *(lång nyckel från Resend)* |
-| `send` | MX | *(från Resend, t.ex. `feedback-smtp.eu-west-1.amazonses.com`, prioritet 10)* |
-| `send` | TXT | *(från Resend, börjar med `v=spf1`)* |
+| `resend._domainkey` | TXT | `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5HuokyfI9YWD7CKPYNHAeKN6nz20QBHLR+pQcN7TjTUKui5ePs75ssp3ixEgVQ/N0joEknqoRGf+PYZIXG31gMD4hPLr/FWuA46EJNDkU+WsJRpxv1H7kTVhTUT17VVt8xheI/5JaCXr3kU7YQcPkxkbHK9hcKhSABql1yp7cOQIDAQAB` |
+| `rsend` | CNAME | `rsend-euw1.forge.rmta.net` |
+| `send` | CNAME | `send.forge.rmta.net` |
 | `_dmarc` | TXT | `v=DMARC1; p=none;` |
+
+Tryck sedan **I've added the records** i Resend → Domains → studentstil.se.
 
 Om Resend visar andra värden än här är det Resends som gäller.
 
